@@ -8,7 +8,7 @@ const App = () => {
       <h1>Your MERN TodoList App</h1>
       <Login />
       {/* Add other components or features of your app here */}
-    </div>
+    </div> 
   );
 };
 

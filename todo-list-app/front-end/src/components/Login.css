@@ -197,7 +197,7 @@ body{
 }
 
 .container.active .toggle-left{
-    transform: translateX(0);
+    transform: translateX(0); 
 }
 
 .toggle-right{
