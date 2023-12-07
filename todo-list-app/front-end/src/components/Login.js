@@ -8,20 +8,38 @@ const Login = () => {
     setIsSignUp(!isSignUp);
   };
 
+  const handleSubmit = (event) => {
+    event.preventDefault();
+    // Add logic for handling form submission
+  };
+
   return (
     <div className={`container ${isSignUp ? 'active' : ''}`}>
       <div className={`form-container ${isSignUp ? 'sign-up' : 'sign-in'}`}>
         {isSignUp ? (
-          <form>
+          <form onSubmit={handleSubmit}>
             <h1>Create Account</h1>
-            {/* ... rest of the sign-up form */}
-            <button>Sign Up</button>
+            <label htmlFor="signup-username">Username</label>
+            <input type="text" id="signup-username" name="signup-username" required />
+
+            <label htmlFor="signup-email">Email</label>
+            <input type="email" id="signup-email" name="signup-email" required />
+
+            <label htmlFor="signup-password">Password</label>
+            <input type="password" id="signup-password" name="signup-password" required />
+
+            <button type="submit">Sign Up</button>
           </form>
         ) : (
-          <form>
+          <form onSubmit={handleSubmit}>
             <h1>Sign In</h1>
-            {/* ... rest of the sign-in form */}
-            <button>Sign In</button>
+            <label htmlFor="signin-username">Username</label>
+            <input type="text" id="signin-username" name="signin-username" required />
+
+            <label htmlFor="signin-password">Password</label>
+            <input type="password" id="signin-password" name="signin-password" required />
+
+            <button type="submit">Sign In</button>
           </form>
         )}
       </div>
@@ -45,6 +63,6 @@ const Login = () => {
       </div>
     </div>
   );
-}; 
+};
 
 export default Login;
