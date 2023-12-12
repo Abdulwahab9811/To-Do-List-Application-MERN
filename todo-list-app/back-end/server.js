@@ -1,15 +1,22 @@
 const express = require('express');
-const bodyParser = require("body-parser");
-const morgan = require("morgan");
-
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
 const { MongoClient } = require('mongodb');
-require('dotenv').config(); 
+const bcrypt = require('bcrypt');
+const dotenv = require('dotenv');
+const cors = require('cors');
 
-const uri = process.env.MONGO_URI;
-
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 5000;
+const uri = process.env.MONGO_URI;
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
+app.use(cors());
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 // Connect to MongoDB
