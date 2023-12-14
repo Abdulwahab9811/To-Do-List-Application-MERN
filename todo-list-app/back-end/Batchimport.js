@@ -1,4 +1,3 @@
-// batchImport.js
 
 const { MongoClient } = require('mongodb');
 const bcrypt = require('bcrypt');
@@ -45,7 +44,7 @@ async function importData() {
     ]);
 
     // Import data into the "notifications" collection
-    await database.collection('notifications').insertMany([
+    await database.collection('Notifications').insertMany([
       // Your notification data objects here
       { userId: 'user1', message: 'Notification 1', createdAt: new Date() },
       { userId: 'user2', message: 'Notification 2', createdAt: new Date() },

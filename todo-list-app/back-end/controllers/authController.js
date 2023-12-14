@@ -44,8 +44,7 @@ const authController = {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
 
-      // You might want to generate and send a JWT token here for successful login
-      // const token = jwt.sign({ userId: user._id }, 'your_secret_key', { expiresIn: '1h' });
+      
 
       res.status(200).json({ message: 'Login successful' });
     } catch (error) {
