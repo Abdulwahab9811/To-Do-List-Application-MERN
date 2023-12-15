@@ -1,14 +1,15 @@
 const bcrypt = require('bcrypt');
-const { createUser } = require('../models/user');
+const { insertUser, findUserByEmail} = require('../models/user');
+const User = require('../models/user').User;
 
 const authController = {
   register: async (req, res) => {
     try {
       const { username, email, password } = req.body;
 
-      // Check if the user already exists
-      const existingUser = await User.findOne({ email });
-      const existingUsername = await User.findOne({ username });
+      const existingUser = await findUserByEmail(email);
+      const existingUsername = await findUserByEmail(username);
+
 
       if (existingUser) {
         return res.status(400).json({ error: 'Email already in use' });
@@ -22,25 +23,28 @@ const authController = {
       const saltRounds = 10;
       const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-      // Create a new user with the hashed password
-      const newUser = new User({ username, email, password: hashedPassword });
+      
+      const userId = await insertUser({ username, email, password: hashedPassword });
+      req.session.userId = userId;
 
-      // Save the user to the database
-      await newUser.save();
+      // Log newUser after it's created (you can remove this line)
+      console.log('User saved:', { _id: userId, username, email });
 
+      // Set the session ID after the user has been saved
+     
       // Call createUser function after the user has been saved
-      await createUser({
-        username,
-        email,
-        password: hashedPassword,
-      });
+     
+
+      
 
       res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
       console.error('Error in user registration:', error);
       res.status(500).json({ error: 'Internal server error' });
-    }
+    } 
   },
+
+
 
   login: async (req, res) => {
     try {
@@ -61,6 +65,7 @@ const authController = {
       }
   
       // If you reach here, the login is successful
+      req.session.userId = user._id;
   
       // Optionally, you can include user data in the response, such as user ID and username
       res.status(200).json({

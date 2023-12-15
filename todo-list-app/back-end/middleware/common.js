@@ -1,47 +1,53 @@
-const bodyParser = require('body-parser');
-const morgan = require('morgan');
-const cors = require('cors');
-const session = require('express-session');
+// const bodyParser = require('body-parser');
+// const morgan = require('morgan');
+// const cors = require('cors');
+// const session = require('express-session');
 
+// const setupMiddleware = (app) => {
+//     // Session Configuration
+//     app.use(session({
+//         secret: '5301e97645b8c3e1d956a3f06e117213cc7a30a75e0b54298f830fd264e56b6a',
+//         resave: true,
+//         saveUninitialized: true,
+//     }));
 
-const setupMiddleware = (app) => {
-    app.use(bodyParser.json());
-    app.use(bodyParser.urlencoded({extended : true}));
+//     // Body Parser Configuration
+//     app.use(bodyParser.json());
+//     app.use(bodyParser.urlencoded({ extended: true }));
 
+//     // Morgan for Logging
+//     app.use(morgan('dev'));
 
-    app.use(morgan('dev'));
+//     // CORS Configuration
+//     app.use(cors({
+//         origin: 'http://localhost:3000',
+//     }));
 
-    app.use(cors());
+//     // Custom Middleware for Authentication
+//     app.use((req, res, next) => {
+//         console.log('Initial Session:', req.session); // Log the initial session
+//         console.log('Session:', req.session); // Log the session object for debugging
 
-    app.use(session({
-        secret: 'f214500579316c2afbe845eecaed196970c64160b053445ad3a7bf5a252314ff',
-        resave: true,
-        saveUninitialized: true,
-    }));
+//         if (req.session && req.session.userId) {
+//             console.log('Authenticated User:', req.session.userId); // Log the authenticated user
+//             next();
+//         } else {
+//             console.log('Unauthorized Access'); // Log unauthorized access
+//             res.status(401).json({ error: 'Unauthorized' });
+//         }
+//     });
 
-    app.use((req,res,next) => {
+//     // Set Custom Header
+//     app.use((req, res, next) => {
+//         res.setHeader('X-Powered-By', 'MyTodoListApp');
+//         next();
+//     });
 
-        if(req.session.userId) {
-            next()
-        }else{
-            res.status(401).json({error : 'Unauthorized'});
-        }
-    });
+//     // Error Handling Middleware
+//     app.use((err, req, res, next) => {
+//         console.error(err.stack);
+//         res.status(500).send('Internal Server Error');
+//     });
+// };
 
-    app.use((req, res, next) => {
-        res.setHeader('X-Powered-By', 'MyTodoListApp');
-        next();
-      });
-    
-      // Example: Middleware for handling errors
-      app.use((err, req, res, next) => {
-        console.error(err.stack);
-        res.status(500).send('Internal Server Error');
-      });
-    
-    
-};
-
-
-module.exports = { setupMiddleware };
-
+// module.exports = { setupMiddleware };
