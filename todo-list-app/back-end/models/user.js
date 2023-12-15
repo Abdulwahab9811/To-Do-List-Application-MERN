@@ -1,4 +1,6 @@
-const { MongoClient, ObjectID } = require('mongodb');
+const { MongoClient } = require('mongodb');
+require('dotenv').config();
+
 const uri = process.env.MONGO_URI;
 
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -12,28 +14,7 @@ async function connectToDatabase() {
   }
 }
 
-async function createUser(user) {
-  const database = client.db('Database'); // Replace with your actual database name
-  const usersCollection = database.collection('users');
 
-  try {
-    const result = await usersCollection.insertOne(user);
-    console.log(`User inserted with _id: ${result.insertedId}`);
-    return result.insertedId;
-  } catch (error) {
-    console.error('Error inserting user', error);
 
-  }
 
-}
-const newUser = {
-    username: 'john_doe',
-    email: 'john@example.com',
-    password: 'hashedPassword',
-  };
-
-createUser(newUser);
-
-// Add more functions for CRUD operations as needed
-
-module.exports = { connectToDatabase, createUser };
+module.exports = { connectToDatabase,  };

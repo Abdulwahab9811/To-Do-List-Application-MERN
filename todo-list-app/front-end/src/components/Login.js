@@ -8,10 +8,39 @@ const Login = () => {
     setIsSignUp(!isSignUp);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Add logic for handling form submission
+    const formData = new FormData(event.target);
+    const data = {
+      username: formData.get('signup-username') || formData.get('signin-username'),
+      email: formData.get('signup-email'),
+      password: formData.get('signup-password') || formData.get('signin-password'),
+    };
+  
+    try {
+      const response = await fetch('/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Registration failed: ${response.statusText}`);
+      }
+  
+      const result = await response.json();
+      console.log(result); // Log the server response
+  
+      // Optionally, you can redirect the user to the login page or perform other actions after successful registration
+    } catch (error) {
+      console.error('Error during registration:', error.message);
+      // Handle the error and provide feedback to the user
+    }
   };
+  
+  
 
   return (
     <div className={`container ${isSignUp ? 'active' : ''}`}>

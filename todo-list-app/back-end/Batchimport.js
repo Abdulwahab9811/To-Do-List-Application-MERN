@@ -20,8 +20,8 @@ async function importData() {
 
     await database.collection('Users').insertMany([
       // Your user data objects here
-      { email: 'user1@example.com', password: hashedPassword1 },
-      { email: 'user2@example.com', password: hashedPassword2 },
+      { username: 'john_doe', email: 'user1@example.com', password: hashedPassword1 },
+      { username: 'john_doe2', email: 'user2@example.com', password: hashedPassword2 },
     ]);
 
     // Import data into the "tasks" collection
