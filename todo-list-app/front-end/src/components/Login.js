@@ -1,11 +1,16 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
+import Homepage from './Homepage';
 
 const Login = () => {
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isSignedIn, setIsSignedIn] = useState(false);
+  const navigate = useNavigate();
+ 
 
   const toggleForm = () => {
     setIsSignUp(!isSignUp);
@@ -13,33 +18,54 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     try {
       const data = { username, email, password };
-
-      const response = await fetch(`http://localhost:5000/auth/${isSignUp ? 'register' : 'login'}`, {
+    
+      let url;
+      let action;
+  
+      if (isSignUp) {
+        url = 'http://localhost:5000/auth/register';
+        action = 'Registration';
+      } else {
+        url = 'http://localhost:5000/auth/login';
+        action = 'Login';
+      }
+  
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
-
+  
+      console.log(`${action} Server Response:`, response);
+  
       if (!response.ok) {
-        throw new Error(`${isSignUp ? 'Registration' : 'Login'} failed: ${response.statusText}`);
+        throw new Error(`${action} failed: ${response.statusText}`);
       }
-
+  
       const result = await response.json();
-      console.log(result); // Log the server response
+      console.log(`${action} Server Result:`, result); // Log the server response
+  
+      alert(`${action} successful!`);
+      
+      setIsSignedIn(true);
+      navigate('/Homepage');
 
-      alert(`${isSignUp ? 'Registration' : 'Login'} successful!`);
-
+  
       // Optionally, you can redirect the user or perform other actions after successful registration/login
     } catch (error) {
       console.error(`Error during ${isSignUp ? 'registration' : 'login'}:`, error.message);
       // Handle the error and provide feedback to the user
     }
   };
+
+  
+ 
+  
 
   return (
     <div className={`container ${isSignUp ? 'active' : ''}`}>

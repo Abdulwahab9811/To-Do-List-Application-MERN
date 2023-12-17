@@ -2,24 +2,20 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const { MongoClient } = require('mongodb');
-const bcrypt = require('bcrypt');
-const dotenv = require('dotenv');
 const cors = require('cors');
-const { connectToDatabase } = require('./models/user');
 const session = require('express-session');
-const authRoutes = require('./routes/auth');
-const taskRoutes = require('./routes/task');
-const userRoutes = require('./routes/users');
-
+const dotenv = require('dotenv');
 dotenv.config();
+
+
+const { connectToDatabase } = require('./models/user');
+const authRoutes = require('./routes/auth');
+
 
 const app = express();
 
 app.use(bodyParser.json());
-app.use(cors({
-  origin: 'http://localhost:3000',
-}));
-
+app.use(cors({ origin: 'http://localhost:3000' }));
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
@@ -30,27 +26,16 @@ app.use(session({
 }));
 
 app.use('/auth', authRoutes);
-app.use('/tasks', taskRoutes);
-app.use('/users', userRoutes);
 
 const port = process.env.PORT || 5000;
 const uri = process.env.MONGO_URI;
-
-const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-
-async function setupDatabase() {
-  try {
-    await connectToDatabase();
-  } catch (error) {
-    console.error('Error connecting to the database', error);
-  }
-}
+const client = new MongoClient(uri); // Move this line after setting uri
 
 const startServer = async () => {
   try {
-    await setupDatabase();
+    await connectToDatabase();
     await client.connect();
-    console.log('Connected to MongoDB');
+    
 
     app.listen(port, () => {
       console.log(`Server is running on port ${port}`);

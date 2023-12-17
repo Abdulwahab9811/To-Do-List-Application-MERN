@@ -1,6 +1,5 @@
 const bcrypt = require('bcrypt');
-const { insertUser, findUserByEmail} = require('../models/user');
-const User = require('../models/user').User;
+const { insertUser, findUserByEmail , User , findUserByUsername } = require('../models/user');
 
 const authController = {
   register: async (req, res) => {
@@ -8,14 +7,16 @@ const authController = {
       const { username, email, password } = req.body;
 
       const existingUser = await findUserByEmail(email);
-      const existingUsername = await findUserByEmail(username);
+      const existingUsername = await findUserByUsername(username);
 
 
       if (existingUser) {
+        console.log('Email already in use:', email);
         return res.status(400).json({ error: 'Email already in use' });
       }
 
       if (existingUsername) {
+        console.log('Usernme already in use:' , email);
         return res.status(400).json({ error: 'Username already in use' });
       }
 
@@ -48,10 +49,10 @@ const authController = {
 
   login: async (req, res) => {
     try {
-      const { email, password } = req.body;
+      const { username, password } = req.body;
   
       // Find the user by email
-      const user = await User.findOne({ email });
+      const user = await findUserByUsername(username) ;
   
       if (!user) {
         return res.status(401).json({ error: 'Invalid credentials' });

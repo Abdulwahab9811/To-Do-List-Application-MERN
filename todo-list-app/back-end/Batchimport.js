@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const uri = process.env.MONGO_URI;
 
+
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 
 async function importData() {
@@ -12,7 +13,7 @@ async function importData() {
     await client.connect();
     console.log('Connected to MongoDB');
 
-    const database = client.db(); 
+    const database = client.db('Database'); 
 
     // Import data into the "users" collection
     const hashedPassword1 = await bcrypt.hash('password1', 10); // Use bcrypt to hash passwords

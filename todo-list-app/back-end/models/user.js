@@ -1,12 +1,13 @@
 const { MongoClient, ObjectId } = require('mongodb');
-require('dotenv').config();
+
 
 const uri = process.env.MONGO_URI;
 let client;
 
 async function connectToDatabase() {
   try {
-    client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
+    console.log('Connecting to MongoDB with URI:', uri);
+    client = new MongoClient(uri);
     await client.connect();
     console.log('Connected to MongoDB');
   } catch (error) {
@@ -15,16 +16,21 @@ async function connectToDatabase() {
 }
 
 async function closeConnection() {
-  if (client) {
-    await client.close();
-    console.log('Closed MongoDB connection');
+  try {
+    if (client) {
+      await client.close();
+      console.log('Closed MongoDB connection');
+    }
+  } catch (error) {
+    console.error('Error closing MongoDB connection', error);
   }
 }
 
+
 async function insertUser(user) {
   try {
-    const database = client.db('your-database-name'); // Replace with your actual database name
-    const usersCollection = database.collection('users');
+    const database = client.db('Database'); // Replace with your actual database name
+    const usersCollection = database.collection('Users');
 
     const result = await usersCollection.insertOne(user);
     console.log(`User inserted with _id: ${result.insertedId}`);
@@ -37,10 +43,7 @@ async function insertUser(user) {
 
 async function findUserByEmail(email) {
   try {
-    const database = client.db('your-database-name'); // Replace with your actual database name
-    const usersCollection = database.collection('users');
-
-    const user = await usersCollection.findOne({ email });
+    const user = await client.db('Database').collection('Users').findOne({ email: email });
     return user;
   } catch (error) {
     console.error('Error finding user by email in MongoDB', error);
@@ -48,4 +51,16 @@ async function findUserByEmail(email) {
   }
 }
 
-module.exports = { connectToDatabase, closeConnection, insertUser, findUserByEmail };
+
+async function findUserByUsername(username) {
+  try {
+    const user = await client.db('Database').collection('Users').findOne({ username: username });
+    return user;
+  } catch (error) {
+    console.error('Error finding user by username in MongoDB', error);
+    throw error;
+  }
+}
+
+
+module.exports = { connectToDatabase, closeConnection,  insertUser, findUserByEmail ,findUserByUsername };
