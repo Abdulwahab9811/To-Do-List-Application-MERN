@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './Login.css';
+import '../CSS/Login.css';
 import Homepage from './Homepage';
 
 const Login = () => {
@@ -44,6 +44,9 @@ const Login = () => {
       console.log(`${action} Server Response:`, response);
   
       if (!response.ok) {
+        if ( response.status === 401) {
+          throw new Error ('Incorrect Username or Password')
+        }
         throw new Error(`${action} failed: ${response.statusText}`);
       }
   
@@ -53,13 +56,13 @@ const Login = () => {
       alert(`${action} successful!`);
       
       setIsSignedIn(true);
-      navigate('/Homepage');
+      navigate('/homepage');
 
   
       // Optionally, you can redirect the user or perform other actions after successful registration/login
     } catch (error) {
       console.error(`Error during ${isSignUp ? 'registration' : 'login'}:`, error.message);
-      // Handle the error and provide feedback to the user
+      alert(`Error: ${error.message}`); 
     }
   };
 

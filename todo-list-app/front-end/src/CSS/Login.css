@@ -11,7 +11,6 @@ body{
     background-color: #c9d6ff;
     background: linear-gradient(to right, #e2e2e2, #c9d6ff);
     display: flex;
-    align-items: center;
     justify-content: center;
     flex-direction: column;
     height: 100vh;
@@ -21,12 +20,45 @@ body{
     background-color: #fff;
     border-radius: 30px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-    position: relative;
+    position: absolute;
     overflow: hidden;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     width: 768px;
     max-width: 100%;
     min-height: 480px;
 }
+
+.container h1, .container h2 {
+    animation: fadeInUp 1s ease-in-out;
+  }
+  
+  @keyframes fadeInUp {
+    0% {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .container form, .toggle-panel {
+    animation: fadeInLeft 1s ease-in-out;
+  }
+  
+  @keyframes fadeInLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
 
 .container p{
     font-size: 14px;
@@ -58,7 +90,12 @@ body{
     text-transform: uppercase;
     margin-top: 10px;
     cursor: pointer;
+    transition: background-color 0.3s ease;
 }
+
+.container button:hover {
+    background-color: #392183; 
+  }
 
 .container button.hidden{
     background-color: transparent;

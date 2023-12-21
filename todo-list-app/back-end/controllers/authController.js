@@ -31,10 +31,7 @@ const authController = {
       // Log newUser after it's created (you can remove this line)
       console.log('User saved:', { _id: userId, username, email });
 
-      // Set the session ID after the user has been saved
-     
-      // Call createUser function after the user has been saved
-     
+      
 
       
 
@@ -65,10 +62,10 @@ const authController = {
         return res.status(401).json({ error: 'Invalid credentials' });
       }
   
-      // If you reach here, the login is successful
+      
       req.session.userId = user._id;
   
-      // Optionally, you can include user data in the response, such as user ID and username
+      
       res.status(200).json({
         message: 'Login successful',
         user: {
