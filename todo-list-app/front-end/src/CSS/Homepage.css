@@ -1,62 +1,171 @@
 /* Homepage.css */
 
+
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.homepage-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Two columns, quotes and logo */
+  gap: 20px; /* Reduced gap for better compactness */
+  max-width: 1200px; 
+  margin: 60px auto 10px;
+  animation: fadeIn 1s ease-out;
+   /* Added fade-in animation */
+}
+
+.quote {
+  background-color: #673ab7;
+  color: #fff;
+  padding: 15px; 
+  border-radius: 10px; 
+  margin-bottom: 15px; 
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 5px 10px rgba(103, 58, 183, 0.2); 
+  overflow: hidden;
+  animation: scaleIn 0.8s ease-out; 
+  
+}
+
+.title {
+  text-align: center;
+  color: #673ab7;
+  margin-bottom: 20px;
+  font-size: 2.2em;
+  animation: fadeIn 1s ease-out; 
+}
+
+
+
+
 .quotes-section {
-    margin-bottom: 60px;
+  grid-column: 1;
+  margin-bottom: 30px; /* Adjusted margin for better spacing */
+}
+
+.logo-section {
+  grid-column: 2;
+  text-align: center; /* Center the content horizontally */
+  margin-bottom: 30px;
+}
+.logo-section img {
+  width: 150px;
+  height: 150px;
+}
+
+
+
+.quote {
+  background-color: #673ab7;
+  color: #fff;
+  padding: 15px; /* Reduced padding for better compactness */
+  border-radius: 10px; /* Reduced border-radius for better compactness */
+  margin-bottom: 15px; /* Adjusted margin for better spacing */
+  transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 0 5px 10px rgba(103, 58, 183, 0.2); /* Reduced box-shadow for better compactness */
+  overflow: hidden;
+}
+
+.quote:hover {
+  background-color: #512da8;
+  transform: translateY(-3px); /* Slightly reduced translateY for better hover effect */
+}
+
+.quote-text {
+  font-size: 1.2em; /* Reduced font size for better compactness */
+  margin-bottom: 8px;
+  font-family: 'Montserrat', sans-serif; /* Adjusted margin for better spacing */
+}
+
+.quote-author {
+  font-size: 0.9em; /* Reduced font size for better compactness */
+  color: rgba(255, 255, 255, 0.8);
+  font-family: 'Montserrat', sans-serif;
+}
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
   }
-  
-  .quote {
-    background-color: #512da8; /* Keep the provided background color */
-    color: #fff; /* Match with your text color */
-    padding: 30px;
-    border-radius: 15px;
-    margin-bottom: 30px;
-    transition: background-color 0.3s, border 0.3s, border-radius 0.3s, box-shadow 0.3s; /* Added transitions */
-    cursor: pointer;
-    position: relative;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Added box-shadow for depth */
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
-  
-  .quote:hover {
-    background-color: #4527a0; /* Keep the provided hover color */
+}
+
+.info-section {
+  margin-bottom: 30px; 
+  animation: slideIn 1s ease-out;/* Adjusted margin for better spacing */
+}
+
+.info-section h2 {
+  font-size: 1.5em; /* Reduced font size for better compactness */
+  margin-bottom: 15px; /* Adjusted margin for better spacing */
+  color: #673ab7;
+
+}
+
+.info-section p {
+  font-size: 1.3em; /* Reduced font size for better compactness */
+  line-height: 1.4;
+  color: #555;
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(100%);
   }
-  
-  .quote-text {
-    font-size: 1.5em;
+  100% {
+    opacity: 1;
+    transform: translateX(0);
   }
-  
-  /* Added a subtle animation to the quotes */
-  @keyframes quoteAnimation {
-    0%, 100% {
-      transform: translateY(0);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-  }
-  
-  
-  .info-section {
-    margin-bottom: 60px;
-  }
-  
-  .info-section p {
-    font-size: 1.3em;
-    line-height: 1.6;
-    color: #333; /* Match with your preferred text color */
-  }
-  
-  .image-section {
-    /* Add styling for image section */
-  }
-  
-  @keyframes fadeInUp {
-    0% {
-      opacity: 0;
-      transform: translateY(30px);
-    }
-    100% {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-  
+}
+
+
+.image-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 250px; /* Adjusted height for better compactness */
+  overflow: hidden;
+  border-radius: 10px;
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+  animation: slideIn 1s ease-out;
+}
+
+.image-section img {
+  width: 100%; /* Ensure the image takes up 100% of the container */
+  height: auto; /* Maintain the image's aspect ratio */
+  border-radius: 10px; /* Match the border-radius of the container */
+}
+
+
+
+
