@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, } from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import '../CSS/Login.css';
+// Importing Homepage for navigation purposes, not directly used in this file
 import Homepage from './Homepage';
 
 const Login = () => {
@@ -9,7 +11,9 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignedIn, setIsSignedIn] = useState(false);
+
   const navigate = useNavigate();
+  
  
 
   const toggleForm = () => {
@@ -56,6 +60,7 @@ const Login = () => {
       alert(`${action} successful!`);
       
       setIsSignedIn(true);
+      
       navigate('/homepage');
 
   

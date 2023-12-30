@@ -1,0 +1,168 @@
+/* Task.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Montserrat', sans-serif;
+}
+
+body {
+  background-color: #f5f5f5;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  height: 100vh;
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+}
+
+
+
+h1 {
+    text-align: center;
+  }
+
+
+/* Form Styling */
+.form-label {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  /* Form Input Styling */
+  .form-input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    margin-top: 8px;
+    outline: none;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  
+  .form-input:focus {
+    border-color: #512da8;
+    box-shadow: 0 0 0 2px rgba(81, 45, 168, 0.3);
+  }
+  
+  /* Form Button Styling */
+  .form-button {
+    background-color: #512da8;
+    color: #fff;
+    font-size: 16px;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .form-button:hover {
+    background-color: #392183;
+  }
+/* Button Styling */
+button {
+  background-color: #512da8;
+  color: #fff;
+  font-size: 16px;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #392183;
+}
+
+/* Task Styling */
+.task-card {
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-bottom: 15px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease;
+  }
+  
+  .task-card:hover {
+    background-color: #d4d4d4;
+  }
+  
+  .task-info {
+    flex-grow: 1;
+  }
+  
+  .task-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 8px;
+    color: #333;
+  }
+  
+  .task-description {
+    font-size: 18px;
+    color: #666;
+  }
+  
+  .task-meta {
+    font-size: 16px;
+    color: #999;
+  }
+  
+  .task-actions {
+    display: flex;
+    gap: 15px;
+  }
+  
+  .task-action-icon {
+    font-size: 24px;
+    cursor: pointer;
+    color: #555;
+    transition: color 0.3s ease;
+  }
+  
+  .task-action-icon:hover {
+    color: #ff6666;
+  }
+
+/* Modern Flex Col Styling */
+.flex-col {
+    display: flex;
+    flex-direction: column;
+    gap: 16px; 
+    font-size: 16px;
+    padding: 12px;
+    border: none;
+    border-radius: 300px;
+   font-weight: 600;
+   letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  
+  
+  
+
+
+
+
+
+
+
+

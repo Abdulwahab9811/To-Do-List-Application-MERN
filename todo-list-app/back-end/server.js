@@ -14,8 +14,15 @@ const authRoutes = require('./routes/auth');
 
 const app = express();
 
+const corsOptions = {
+  origin: 'http://localhost:3000',
+  credentials: true, // Add this line to allow credentials
+};
+
+app.use(cors(corsOptions))
+
 app.use(bodyParser.json());
-app.use(cors({ origin: 'http://localhost:3000' }));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
@@ -26,6 +33,8 @@ app.use(session({
 }));
 
 app.use('/auth', authRoutes);
+
+
 
 const port = process.env.PORT || 5000;
 const uri = process.env.MONGO_URI;

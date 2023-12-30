@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import Login from '../src/components/Login';
 import Homepage from './components/Homepage';
 import Navbar from './components/Navbar';
+import  Task  from './components/Task'; 
+import Account from './components/Account'
 
 
 
@@ -15,8 +17,8 @@ const App = () => {
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/homepage" element={<Homepage />} />
-          <Route path="/account" element={<div>My Account Page</div>} />
-          <Route path="/tasks" element={<div>My Tasks Page</div>} />
+          <Route path="/account" element={<Account/>} />
+          <Route path="/tasks" element={<Task />} />
           <Route path="/" element={<Navigate to="/login" />} />
         </Routes>
       </div>
