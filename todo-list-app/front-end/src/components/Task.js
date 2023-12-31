@@ -13,51 +13,78 @@ const Task = () => {
 
   const formRef = useRef(null);
 
-  const handleAddTask = (e) => {
+  const handleAddTask = async (e) => {
     e.preventDefault();
-    setTasks((prevTasks) => [...prevTasks, { ...newTask, _id: Date.now().toString(), completed: false }]);
-    setNewTask({ title: '', description: '', dueDate: '' });
+
+    try {
+      const response = await fetch('http://localhost:5000/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newTask),
+      });
+
+      const data = await response.json();
+
+      setTasks((prevTasks) => [...prevTasks, data]);
+      setNewTask({ title: '', description: '', dueDate: '' });
+    } catch (error) {
+      console.error('Error adding task:', error);
+    }
   };
 
-  
- 
   useEffect(() => {
-    // Scroll to the top when tasks change
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch('http://localhost:5000/tasks');
+        const data = await response.json();
 
-    // Apply fadeIn and scaleIn animations to the form when the component mounts
-    formRef.current.style.animation = 'fadeIn 0.5s ease, scaleIn 0.5s ease';
-    formRef.current.style.opacity = '1';
-    formRef.current.style.transform = 'scale(1)';
-
-    // Clean up animations after they finish
-    const animationEndHandler = () => {
-      formRef.current.style.animation = '';
-      formRef.current.removeEventListener('animationend', animationEndHandler);
+        setTasks(data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
     };
 
-    formRef.current.addEventListener('animationend', animationEndHandler);
+    fetchTasks();
 
-    // Specify the dependencies to avoid eslint warnings
-  }, [tasks]);
-  
+    
 
-  const handleDelete = (taskId) => {
-    setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+  }, []); 
+
+  const handleDelete = async (taskId) => {
+    try {
+      await fetch(`http://localhost:5000/tasks/${taskId}`, {
+        method: 'DELETE',
+      });
+
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+    }
   };
 
-  const handleComplete = (taskId) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task._id === taskId ? { ...task, completed: !task.completed } : task
-      )
-    );
+  const handleComplete = async (taskId) => {
+    try {
+      const response = await fetch(`http://localhost:5000/tasks/${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ completed: true }),
+      });
+
+      const data = await response.json();
+
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task._id === taskId ? data : task))
+      );
+    } catch (error) {
+      console.error('Error completing task:', error);
+    }
   };
 
-  const handleRetrieve = (taskId) => {
-    // Implement your retrieve logic here
-    // You can update the tasks state accordingly
-  };
+
   return (
     <div className="task-container">
       <h1 className="text-3xl font-semibold mb-4">Add Task</h1>
@@ -128,7 +155,7 @@ const Task = () => {
             )}
             {task.completed && (
               <RestoreIcon
-                onClick={() => handleRetrieve(task._id)}
+                
                 className="task-action-icon retrieve-task-btn"
               />
             )}

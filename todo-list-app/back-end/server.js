@@ -9,10 +9,15 @@ dotenv.config();
 
 
 const { connectToDatabase } = require('./models/user');
+const { setupMiddleware } = require('./middleware/common');
 const authRoutes = require('./routes/auth');
+const taskRoutes = require('./routes/task');
 
 
 const app = express();
+
+setupMiddleware(app);
+
 
 const corsOptions = {
   origin: 'http://localhost:3000',
@@ -33,6 +38,12 @@ app.use(session({
 }));
 
 app.use('/auth', authRoutes);
+app.use('/tasks', taskRoutes); 
+
+app.use((err, req, res, next) => {
+  console.error(err.stack);
+  res.status(500).json({ error: 'Internal Server Error' });
+});
 
 
 

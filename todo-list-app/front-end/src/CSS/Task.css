@@ -140,6 +140,36 @@ button:hover {
     color: #ff6666;
   }
 
+ /* Add these styles to your CSS */
+
+
+.view-completed-tasks-link-container {
+  display: none; /* Initially hide the link container */
+}
+
+.task-card:hover .view-completed-tasks-link-container {
+  display: flex; /* Show the link container on hover */
+  gap: 15px; /* Adjust the gap to your preference */
+  align-items: center; /* Center the link vertically with the icons */
+}
+
+.view-completed-tasks-link {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: #512da8;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.view-completed-tasks-link:hover {
+  background-color: #392183;
+}
+
+
+
 /* Modern Flex Col Styling */
 .flex-col {
     display: flex;
