@@ -1,3 +1,5 @@
+//controller/authController.js
+
 const bcrypt = require('bcrypt');
 const { insertUser, findUserByEmail , findUserByUsername } = require('../models/user');
 

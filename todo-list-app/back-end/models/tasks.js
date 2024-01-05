@@ -1,59 +1,28 @@
-const { ObjectId } = require('mongodb');
+// models/tasks.js
 
 class Task {
-  constructor(database) {
-    this.collection = database.collection('Tasks');
-  }
-
-  async getAllTasks() {
-    try {
-      const tasks = await this.collection.find().toArray();
-      console.log('All tasks:', tasks);
-      return tasks;
-    } catch (error) {
-      console.error('Error fetching tasks:', error);
-      throw error;
-    }
-  }
-
-  async createTask({ title, description }) {
-    try {
-      const newTask = {
-        title,
-        description,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      };
-      const result = await this.collection.insertOne(newTask);
-      console.log('New task created:', result.ops[0]);
+   constructor(database) {
+      this.db = database;
+   }
+  
+   async getAllTasks() {
+      return await this.db.collection('tasks').find().toArray();
+   }
+  
+   async createTask(task) {
+      const result = await this.db.collection('tasks').insertOne(task);
       return result.ops[0];
-    } catch (error) {
-      console.error('Error creating task:', error);
-      throw error;
-    }
-  }
-
-  async updateTask(id, updates) {
-    try {
-      const result = await this.collection.updateOne({ _id: ObjectId(id) }, { $set: updates });
-      console.log('Update task result:', result);
+   }
+  
+   async updateTask(taskId, updates) {
+      const result = await this.db.collection('tasks').updateOne({ _id: new ObjectId(taskId) }, { $set: updates });
       return result.modifiedCount > 0;
-    } catch (error) {
-      console.error('Error updating task:', error);
-      throw error;
-    }
-  }
-
-  async deleteTask(id) {
-    try {
-      const result = await this.collection.deleteOne({ _id: ObjectId(id) });
-      console.log('Delete task result:', result);
+   }
+  
+   async deleteTask(taskId) {
+      const result = await this.db.collection('tasks').deleteOne({ _id: new ObjectId(taskId) });
       return result.deletedCount > 0;
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      throw error;
-    }
+   }
   }
-}
-
-module.exports = Task;
+  
+  module.exports = Task;

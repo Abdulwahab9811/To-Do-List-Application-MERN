@@ -1,10 +1,10 @@
-// Updated Task component
+//component/task.js
 
-import React, { useState,useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RestoreIcon from '@mui/icons-material/Restore';
-import EditIcon from '@mui/icons-material/Edit';
+import axios from 'axios';
 import moment from 'moment';
 import '../CSS/Task.css';
 
@@ -12,155 +12,65 @@ import '../CSS/Task.css';
 const Task = () => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '' });
-  const [editTask, setEditTask] = useState(null); // To track the task being edited
-
-  const formRef = useRef(null);
-
-  const sendRequest = async (url, options = {}) => {
-    try {
-      const response = await fetch(url, options);
-  
-      if (!response.ok) {
-        throw new Error(`Request failed with status: ${response.status}`);
-      }
-  
-      return await response.json();
-    } catch (error) {
-      console.error('API Request Error:', error);
-      throw error; // Re-throw the error to allow the calling code to handle it
-    }
-  };
-  
-
+ 
+ 
+  const formRef = useRef();
   const handleAddTask = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await sendRequest('http://localhost:5000/tasks', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newTask),
-      });
-
-      const data = await response.json();
-
-      setTasks((prevTasks) => [...prevTasks, data]);
-      setNewTask({ title: '', description: '', dueDate: '' });
-      // Provide feedback to the user (e.g., toast notification)
-      alert('Task added successfully!');
-    } catch (error) {
-      console.error('Error adding task:', error);
-      // Provide feedback to the user (e.g., toast notification)
-      alert('Error adding task. Please try again.');
-    }
+     e.preventDefault();
+     const taskId = Math.floor(Math.random() * 10000);
+     const newTaskObj = { ...newTask, _id: taskId };
+ 
+     try {
+       await axios.post('http://localhost:5000/tasks/create', newTaskObj);
+       setTasks((prevTasks) => [...prevTasks, newTaskObj]);
+       setNewTask({ title: '', description: '', dueDate: '' });
+     } catch (error) {
+       console.error('Error adding task:', error);
+     }
   };
-
-  const handleEditTask = (task) => {
-    setEditTask(task);
-    setNewTask({ title: task.title, description: task.description, dueDate: task.dueDate });
-  };
-
-  const handleUpdateTask = async () => {
-    try {
-      const response = await sendRequest(`http://localhost:5000/tasks/${editTask._id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newTask),
-      });
-
-      const data = await response.json();
-
-      setTasks((prevTasks) =>
-        prevTasks.map((task) => (task._id === editTask._id ? data : task))
-      );
-      setEditTask(null);
-      setNewTask({ title: '', description: '', dueDate: '' });
-      // Provide feedback to the user (e.g., toast notification)
-      alert('Task updated successfully!');
-    } catch (error) {
-      console.error('Error updating task:', error);
-      // Provide feedback to the user (e.g., toast notification)
-      alert('Error updating task. Please try again.');
-    }
-  };
-
-  const handleCancelEdit = () => {
-    setEditTask(null);
-    setNewTask({ title: '', description: '', dueDate: '' });
-  };
-
+ 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await sendRequest('http://localhost:5000/tasks',{
-
-        credentials: 'include',
-       });
-
-        if (!response.ok) {
-          // Handle non-successful responses (e.g., unauthorized)
-          throw new Error('Failed to fetch tasks');
-        }
-  
-        const data = await response.json();
-
-
-        if (Array.isArray(data)) {
-          setTasks(data);
-        } else {
-          console.error('Unexpected data format:', data);
-        }
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-        
-      }
-    };
-
-    fetchTasks();
-  }, []); 
-
+     const fetchTasks = async () => {
+       try {
+         const response = await axios.get('http://localhost:5000/tasks');
+         setTasks(response.data);
+       } catch (error) {
+         console.error('Error fetching tasks:', error);
+       }
+     };
+ 
+     fetchTasks();
+  }, []);
+ 
   const handleDelete = async (taskId) => {
-    try {
-      await sendRequest(`http://localhost:5000/tasks/${taskId}`, {
-        method: 'DELETE',
-      });
-
-      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
-      // Provide feedback to the user (e.g., toast notification)
-      alert('Task deleted successfully!');
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      // Provide feedback to the user (e.g., toast notification)
-      alert('Error deleting task. Please try again.');
-    }
+     try {
+       await axios.delete(`http://localhost:5000/tasks/${taskId}`);
+       setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+     } catch (error) {
+       console.error('Error deleting task:', error);
+     }
   };
-
+ 
   const handleComplete = async (taskId) => {
-    try {
-      const response = await sendRequest(`http://localhost:5000/tasks/${taskId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ completed: true }),
-      });
-
-      const data = await response.json();
-
-      setTasks((prevTasks) =>
-        prevTasks.map((task) => (task._id === taskId ? data : task))
-      );
-      // Provide feedback to the user (e.g., toast notification)
-      alert('Task marked as completed!');
-    } catch (error) {
-      console.error('Error completing task:', error);
-      // Provide feedback to the user (e.g., toast notification)
-      alert('Error completing task. Please try again.');
-    }
+     try {
+       await axios.put(`http://localhost:5000/tasks/${taskId}`, { completed: true });
+       setTasks((prevTasks) =>
+         prevTasks.map((task) =>
+           task._id === taskId ? { ...task, completed: true } : task
+         )
+       );
+     } catch (error) {
+       console.error('Error completing task:', error);
+     }
+  };
+ 
+  const handleRetrieve = async (taskId) => {
+     try {
+       const response = await axios.get(`http://localhost:5000/tasks/${taskId}`);
+       console.log('Task retrieved:', response.data);
+     } catch (error) {
+       console.error('Error retrieving task:', error);
+     }
   };
 
   return (
@@ -210,38 +120,15 @@ const Task = () => {
       </form>
   
       {tasks.map((task) => (
-        <div key={task._id} className={`task-card ${task.completed ? 'completed' : ''}`}>
+        <div key={task._id} className="task-card">
           <div className="task-info">
-            {editTask === task ? (
-              <div className="edit-task-form">
-                <input
-                  type="text"
-                  value={newTask.title}
-                  onChange={(e) => setNewTask((prevTask) => ({ ...prevTask, title: e.target.value }))}
-                />
-                <textarea
-                  value={newTask.description}
-                  onChange={(e) => setNewTask((prevTask) => ({ ...prevTask, description: e.target.value }))}
-                />
-                <input
-                  type="datetime-local"
-                  value={newTask.dueDate}
-                  onChange={(e) => setNewTask((prevTask) => ({ ...prevTask, dueDate: e.target.value }))}
-                />
-                <button onClick={handleUpdateTask}>Update Task</button>
-                <button onClick={handleCancelEdit}>Cancel</button>
-              </div>
-            ) : (
-              <>
-                <h4 className="task-title">{task.title}</h4>
-                <p className="task-description">{task.description}</p>
-                <div className='task-meta'>
-                  {task.dueDate && (
-                    <p className='task-due-date'>{`Due: ${moment(task.dueDate).format('MMMM D, YYYY h:mm A')}`}</p>
-                  )}
-                </div>
-              </>
-            )}
+            <h4 className="task-title">{task.title}</h4>
+            <p className="task-description">{task.description}</p>
+            <div className='task-meta'>
+              {task.dueDate && (
+                <p className='task-due-date'>{`Due: ${moment(task.dueDate).format('MMMM D, YYYY h:mm A')}`}</p>
+              )}
+            </div>
           </div>
           <div className="task-actions">
             <DeleteIcon
@@ -254,15 +141,9 @@ const Task = () => {
                 className="task-action-icon complete-task-btn"
               />
             )}
-            {!task.completed && (
-              <EditIcon
-                onClick={() => handleEditTask(task)}
-                className="task-action-icon edit-task-btn"
-              />
-            )}
             {task.completed && (
               <RestoreIcon
-                // Add necessary logic for task restoration
+                onClick={() => handleRetrieve(task._id)}
                 className="task-action-icon retrieve-task-btn"
               />
             )}
@@ -271,5 +152,7 @@ const Task = () => {
       ))}
     </div>
   );
+  
 };
+
 export default Task;
