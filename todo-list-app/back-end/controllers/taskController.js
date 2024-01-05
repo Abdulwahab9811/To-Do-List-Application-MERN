@@ -3,7 +3,7 @@ const Task = require('../models/tasks');
 
 const getAllTasks = async (req, res) => {
   try {
-    const taskModel = new Task(req.app.locals.database);
+    const taskModel = new Task(req.app.locals.Database);
     const tasks = await taskModel.getAllTasks();
     res.json(tasks);
   } catch (error) {
@@ -14,7 +14,7 @@ const getAllTasks = async (req, res) => {
 
 const createTask = async (req, res) => {
   try {
-    const taskModel = new Task(req.app.locals.database);
+    const taskModel = new Task(req.app.locals.Database);
     const { title, description } = req.body;
     const newTask = await taskModel.createTask({ title, description });
     res.status(201).json(newTask);
@@ -26,7 +26,7 @@ const createTask = async (req, res) => {
 
 const updateTask = async (req, res) => {
   try {
-    const taskModel = new Task(req.app.locals.database);
+    const taskModel = new Task(req.app.locals.Database);
     const taskId = req.params.id;
     const updates = req.body;
     const success = await taskModel.updateTask(taskId, updates);
@@ -43,7 +43,7 @@ const updateTask = async (req, res) => {
 
 const deleteTask = async (req, res) => {
   try {
-    const taskModel = new Task(req.app.locals.database);
+    const taskModel = new Task(req.app.locals.Database);
     const taskId = req.params.id;
     const success = await taskModel.deleteTask(taskId);
     if (success) {

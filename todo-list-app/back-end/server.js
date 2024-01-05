@@ -1,15 +1,19 @@
 const express = require('express');
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const { MongoClient } = require('mongodb');
-const cors = require('cors');
+
 const session = require('express-session');
 const dotenv = require('dotenv');
 dotenv.config();
 
 
 const { connectToDatabase } = require('./models/user');
-const { setupMiddleware } = require('./middleware/common');
+const { setupMiddleware } = require('./middleware/common.js');
+const { requireAuth } = require('./middleware/authMiddleware');
+
+
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/task');
 
@@ -33,12 +37,18 @@ app.use(morgan('dev'));
 
 app.use(session({
   secret: process.env.SESSION_SECRET || '5301e97645b8c3e1d956a3f06e117213cc7a30a75e0b54298f830fd264e56b6a',
-  resave: true,
+  resave: false,
   saveUninitialized: true,
+  
 }));
 
 app.use('/auth', authRoutes);
 app.use('/tasks', taskRoutes); 
+
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Credentials', true);
+  next();
+});
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
