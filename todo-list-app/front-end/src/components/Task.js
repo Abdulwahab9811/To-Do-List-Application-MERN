@@ -16,62 +16,67 @@ const Task = () => {
  
   const formRef = useRef();
   const handleAddTask = async (e) => {
-     e.preventDefault();
-     const taskId = Math.floor(Math.random() * 10000);
-     const newTaskObj = { ...newTask, _id: taskId };
- 
-     try {
-       await axios.post('http://localhost:5000/tasks/create', newTaskObj);
-       setTasks((prevTasks) => [...prevTasks, newTaskObj]);
-       setNewTask({ title: '', description: '', dueDate: '' });
-     } catch (error) {
-       console.error('Error adding task:', error);
-     }
+    e.preventDefault();
+    const newTaskObj = { ...newTask };
+
+    try {
+      await axios.post('http://localhost:5000/tasks', newTaskObj);
+      setTasks((prevTasks) => [...prevTasks, newTaskObj]);
+      setNewTask({ title: '', description: '', dueDate: '' });
+    } catch (error) {
+      console.error('Error adding task:', error);
+      // Display a user-friendly error message, if needed
+    }
   };
- 
+
   useEffect(() => {
-     const fetchTasks = async () => {
-       try {
-         const response = await axios.get('http://localhost:5000/tasks');
-         setTasks(response.data);
-       } catch (error) {
-         console.error('Error fetching tasks:', error);
-       }
-     };
- 
-     fetchTasks();
+    const fetchTasks = async () => {
+      try {
+        const response = await axios.get('http://localhost:5000/tasks');
+        setTasks(response.data);
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+        // Display a user-friendly error message, if needed
+      }
+    };
+
+    fetchTasks();
   }, []);
- 
+
   const handleDelete = async (taskId) => {
-     try {
-       await axios.delete(`http://localhost:5000/tasks/${taskId}`);
-       setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
-     } catch (error) {
-       console.error('Error deleting task:', error);
-     }
+    try {
+      await axios.delete(`http://localhost:5000/tasks/${taskId}`);
+      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      // Display a user-friendly error message, if needed
+    }
+  };
+
+  const handleUpdate = async (taskId) => {
+    try {
+      await axios.put(`http://localhost:5000/tasks/${taskId}`, { completed: true });
+      setTasks((prevTasks) =>
+        prevTasks.map((task) => (task._id === taskId ? { ...task, completed: true } : task))
+      );
+    } catch (error) {
+      console.error('Error updating task:', error);
+      // Display a user-friendly error message, if needed
+    }
+  };
+  
+  const handleComplete = (taskId) => {
+    // You can add any logic related to completion here
+    console.log(`Task ${taskId} completed!`);
+  
+    // For example, you can change the color dynamically
+    const updatedTasks = tasks.map((task) =>
+      task._id === taskId ? { ...task, completed: true, color: 'green' } : task
+    );
+  
+    setTasks(updatedTasks);
   };
  
-  const handleComplete = async (taskId) => {
-     try {
-       await axios.put(`http://localhost:5000/tasks/${taskId}`, { completed: true });
-       setTasks((prevTasks) =>
-         prevTasks.map((task) =>
-           task._id === taskId ? { ...task, completed: true } : task
-         )
-       );
-     } catch (error) {
-       console.error('Error completing task:', error);
-     }
-  };
- 
-  const handleRetrieve = async (taskId) => {
-     try {
-       const response = await axios.get(`http://localhost:5000/tasks/${taskId}`);
-       console.log('Task retrieved:', response.data);
-     } catch (error) {
-       console.error('Error retrieving task:', error);
-     }
-  };
 
   return (
     <div className="task-container">
@@ -135,18 +140,19 @@ const Task = () => {
               onClick={() => handleDelete(task._id)}
               className="task-action-icon delete-task-btn"
             />
-            {!task.completed && (
-              <CheckCircleIcon
-                onClick={() => handleComplete(task._id)}
-                className="task-action-icon complete-task-btn"
-              />
-            )}
-            {task.completed && (
-              <RestoreIcon
-                onClick={() => handleRetrieve(task._id)}
-                className="task-action-icon retrieve-task-btn"
-              />
-            )}
+
+              {task.completed ? (
+             <RestoreIcon
+             onClick={() => handleComplete(task._id)}
+             className={`task-action-icon retrieve-task-btn completed-task`}
+              style={{ color: task.color || 'green' }} // Change the color to green if not specified
+             />
+              ) : (
+            <CheckCircleIcon
+            onClick={() => handleUpdate(task._id)}
+           className="task-action-icon complete-task-btn"
+            />
+             )}
           </div>
         </div>
       ))}

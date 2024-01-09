@@ -23,8 +23,7 @@ app.use(session({
 }));
 
 app.use('/auth', authRoutes);
-app.use('/tasks', taskRoutes); 
-
+app.use('/', require('./routes/task'));
 // Error handling middleware
 app.use((err, req, res, next) => {
  console.error(err.stack);

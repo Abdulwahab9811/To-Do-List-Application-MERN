@@ -1,65 +1,71 @@
-// controllers/taskController.js
-const Task = require('../models/tasks');
+//controllers/taskController.js
+const { MongoClient, ObjectId } = require('mongodb');
+const uri = process.env.MONGO_URI;
+const client = new MongoClient(uri);
 
-const getAllTasks = async (req, res) => {
- try {
-    const taskModel = new Task(req.app.locals.Database);
-    const tasks = await taskModel.getAllTasks();
-    res.json(tasks);
- } catch (error) {
-    console.error('Error fetching tasks:', error);
-    res.status(500).json({ error: 'Internal server error' });
- }
+exports.getAllTasks = async (req, res, next) => {
+  try {
+    await client.connect();
+    const collection = client.db("Database").collection("Tasks");
+    const tasks = await collection.find({}).toArray();
+    res.status(200).json(tasks);
+  } catch (error) {
+    next(error);
+  } finally {
+    await client.close();
+  }
 };
 
-const createTask = async (req, res) => {
- try {
-    const taskModel = new Task(req.app.locals.Database);
-    const { title, description } = req.body;
-    const newTask = await taskModel.createTask({ title, description });
-    res.status(201).json(newTask);
- } catch (error) {
-    console.error('Error creating task:', error);
-    res.status(500).json({ error: 'Internal server error' });
- }
+exports.createTask = async (req, res, next) => {
+  try {
+    await client.connect();
+    const collection = client.db("Database").collection("Tasks");
+    const task = req.body;
+
+    // Check if the request body contains necessary fields
+    if (!task.taskName || !task.description || !task.userId) {
+      return next({ status: 400, message: 'Missing required fields' });
+    }
+
+    const result = await collection.insertOne(task);
+    res.status(201).json(task);
+  } catch (error) {
+    next(error);
+  } finally {
+    await client.close();
+  }
 };
 
-const updateTask = async (req, res) => {
- try {
-    const taskModel = new Task(req.app.locals.Database);
+exports.updateTask = async (req, res, next) => {
+  try {
+    await client.connect();
+    const collection = client.db("Database").collection("Tasks");
     const taskId = req.params.id;
-    const updates = req.body;
-    const success = await taskModel.updateTask(taskId, updates);
-    if (success) {
-      res.json({ message: 'Task updated successfully' });
+    const updatedTaskData = req.body;
+    const result = await collection.updateOne({ _id: new ObjectId(taskId) }, { $set: updatedTaskData });
+
+    if (result.modifiedCount > 0) {
+      res.status(200).json(updatedTaskData);
     } else {
       res.status(404).json({ error: 'Task not found' });
     }
- } catch (error) {
-    console.error('Error updating task:', error);
-    res.status(500).json({ error: 'Internal server error' });
- }
+  } catch (error) {
+    next(error);
+  } finally {
+    await client.close();
+  }
 };
 
-const deleteTask = async (req, res) => {
- try {
-    const taskModel = new Task(req.app.locals.Database);
+exports.deleteTask = async (req, res, next) => {
+  try {
+    await client.connect();
+    const collection = client.db("Database").collection("Tasks");
     const taskId = req.params.id;
-    const success = await taskModel.deleteTask(taskId);
-    if (success) {
-      res.json({ message: 'Task deleted successfully' });
-    } else {
-      res.status(404).json({ error: 'Task not found' });
-    }
- } catch (error) {
-    console.error('Error deleting task:', error);
-    res.status(500).json({ error: 'Internal server error' });
- }
-};
-
-module.exports = {
- getAllTasks,
- createTask,
- updateTask,
- deleteTask,
+    const result = await collection.deleteOne({ _id: new ObjectId(taskId) });
+    res.status(200).json({ message: 'Task deleted successfully' });
+  } catch (error) {
+    next(error);
+  } finally {
+    await client.close();
+  }
 };
