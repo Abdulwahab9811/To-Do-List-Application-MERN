@@ -1,16 +1,33 @@
 // Navbar.js
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import '../CSS/Navbar.css'
-
+import { useSelector } from 'react-redux';
 const Navbar = () => {
+const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
   return (
     <nav>
-      <ul>
-        <li><Link to="/homepage"  className="nav-link">Home</Link></li>
-        <li><Link to="/account" className="nav-link">My Account</Link></li>
-        <li><Link to="/tasks" className="nav-link"> My Tasks</Link></li>
-      </ul>
+      <ul className="navbar-nav me-auto mb-2 mb-lg-0">
+ <li className="nav-item">
+    <NavLink className="nav-link" to="/homepage">
+      Homepage
+    </NavLink>
+ </li>
+ {isAuthenticated && (
+    <li className="nav-item">
+      <NavLink className="nav-link" to="/account">
+        Account
+      </NavLink>
+    </li>
+ )}
+ {isAuthenticated && (
+    <li className="nav-item">
+      <NavLink className="nav-link" to="/tasks">
+        Tasks
+      </NavLink>
+    </li>
+ )}
+</ul>
     </nav>
   );
 };

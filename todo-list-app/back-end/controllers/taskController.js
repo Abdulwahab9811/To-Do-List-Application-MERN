@@ -16,21 +16,16 @@ exports.getAllTasks = async (req, res, next) => {
   }
 };
 
-exports.createTask = async (req, res, next) => {
+exports.createTask = async (req, res) => {
   try {
     await client.connect();
     const collection = client.db("Database").collection("Tasks");
     const task = req.body;
-
-    // Check if the request body contains necessary fields
-    if (!task.taskName || !task.description || !task.userId) {
-      return next({ status: 400, message: 'Missing required fields' });
-    }
-
     const result = await collection.insertOne(task);
     res.status(201).json(task);
   } catch (error) {
-    next(error);
+    console.error('Error creating task:', error);
+    res.status(500).json({ error: 'Failed to create task', details: error.message });
   } finally {
     await client.close();
   }
