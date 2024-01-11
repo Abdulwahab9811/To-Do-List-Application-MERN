@@ -1,18 +1,29 @@
-import React, { useState, } from 'react';
+//login.js
+import React, {  useState, } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { loginSuccess } from '../redux/Authactions';
+import store from '../redux/store';
+
 
 import '../CSS/Login.css';
 // Importing Homepage for navigation purposes, not directly used in this file
 import Homepage from './Homepage';
 
 const Login = () => {
+
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+
+  const navigate = useNavigate();
+
   const [isSignUp, setIsSignUp] = useState(false);
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [isSignedIn, setIsSignedIn] = useState(false);
 
-  const navigate = useNavigate();
+  
   
  
 
@@ -60,7 +71,11 @@ const Login = () => {
       alert(`${action} successful!`);
       
       setIsSignedIn(true);
-      
+
+      console.log('Login.js: Before dispatching loginSuccess:', store.getState());
+      dispatch(loginSuccess());
+      console.log('Login.js: After dispatching loginSuccess:', store.getState());
+
       navigate('/homepage');
 
   
@@ -77,34 +92,38 @@ const Login = () => {
 
   return (
     <div className={`container ${isSignUp ? 'active' : ''}`}>
-      <div className={`form-container ${isSignUp ? 'sign-up' : 'sign-in'}`}>
-        {isSignUp ? (
-          <form onSubmit={handleSubmit}>
-            <h1>Create Account</h1>
-            <label htmlFor="signup-username">Username</label>
-            <input type="text" id="signup-username" name="signup-username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-
-            <label htmlFor="signup-email">Email</label>
-            <input type="email" id="signup-email" name="signup-email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-
-            <label htmlFor="signup-password">Password</label>
-            <input type="password" id="signup-password" name="signup-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-
-            <button type="submit">Sign Up</button>
-          </form>
-        ) : (
-          <form onSubmit={handleSubmit}>
-            <h1>Sign In</h1>
-            <label htmlFor="signin-username">Username</label>
-            <input type="text" id="signin-username" name="signin-username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-
-            <label htmlFor="signin-password">Password</label>
-            <input type="password" id="signin-password" name="signin-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-
-            <button type="submit">Sign In</button>
-          </form>
-        )}
-      </div>
+      {isAuthenticated ? (
+        <Homepage />
+      ) : (
+        <div className={`form-container ${isSignUp ? 'sign-up' : 'sign-in'}`}>
+          {isSignUp ? (
+            <form onSubmit={handleSubmit}>
+              <h1>Create Account</h1>
+              <label htmlFor="signup-username">Username</label>
+              <input type="text" id="signup-username" name="signup-username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+  
+              <label htmlFor="signup-email">Email</label>
+              <input type="email" id="signup-email" name="signup-email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+  
+              <label htmlFor="signup-password">Password</label>
+              <input type="password" id="signup-password" name="signup-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+  
+              <button type="submit">Sign Up</button>
+            </form>
+          ) : (
+            <form onSubmit={handleSubmit}>
+              <h1>Sign In</h1>
+              <label htmlFor="signin-username">Username</label>
+              <input type="text" id="signin-username" name="signin-username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+  
+              <label htmlFor="signin-password">Password</label>
+              <input type="password" id="signin-password" name="signin-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+  
+              <button type="submit">Sign In</button>
+            </form>
+          )}
+        </div>
+      )}
       <div className="toggle-container">
         <div className={`toggle ${isSignUp ? '' : 'active'}`}>
           <div className={`toggle-panel toggle-left ${isSignUp ? 'active' : ''}`}>
@@ -125,6 +144,7 @@ const Login = () => {
       </div>
     </div>
   );
+  
 };
 
 export default Login;
