@@ -22,13 +22,15 @@ app.use(session({
  saveUninitialized: true,
 }));
 
-app.use('/auth', authRoutes);
-app.use('/', require('./routes/task'));
+
 // Error handling middleware
 app.use((err, req, res, next) => {
  console.error(err.stack);
  res.status(500).send({ error: err.toString() });
 });
+
+app.use('/auth', authRoutes);
+app.use('/', require('./routes/task'));
 
 
 

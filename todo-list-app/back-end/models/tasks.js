@@ -16,15 +16,16 @@ const connectDB = async () => {
 };
 
 const Task = {
- async getAllTasks() {
+ async getAllTasks (userId) {
     const db = await connectDB();
-    const tasks = await db.collection('tasks').find().toArray();
+    const tasks = await db.collection('tasks').find({userId: NewObjectId(userId)}).toArray();
     return tasks;
  },
 
- async createTask(task) {
+ async createTask(task, userId) {
     const db = await connectDB();
-    const result = await db.collection('tasks').insertOne(task);
+    const TaskWithUserId = {...Task, userId : NewObjectId(userId)};
+    const result = await db.collection('tasks').insertOne(TaskWithUserId );
     return result.ops[0];
  },
 

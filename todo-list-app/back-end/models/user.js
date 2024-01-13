@@ -1,5 +1,5 @@
+//models/user.js
 const { MongoClient, ObjectId } = require('mongodb');
-
 const uri = process.env.MONGO_URI;
 let client;
 
