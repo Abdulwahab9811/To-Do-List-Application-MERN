@@ -1,87 +1,65 @@
-//controller/authController.js
+// authController.js
 
-const bcrypt = require('bcrypt');
-const { insertUser, findUserByEmail , findUserByUsername } = require('../models/user');
+const { insertUser, connectToDatabase } = require("../models/user");
+const { createSecretToken } = require("../utils/SecretToken");
+const bcrypt = require("bcryptjs");
 
-const authController = {
-  register: async (req, res) => {
-    try {
-      const { username, email, password } = req.body;
+async function findOneUserByEmail(email) {
+  const db = await connectToDatabase();
+  const usersCollection = db.collection('Users');
+  return usersCollection.findOne({ email });
+}
 
-      const existingUser = await findUserByEmail(email);
-      const existingUsername = await findUserByUsername(username);
+module.exports.Signup = async (req, res, next) => {
+  try {
+    const { email, password, username } = req.body;
+    const existingUser = await findOneUserByEmail(email);
 
-
-      if (existingUser) {
-        console.log('Email already in use:', email);
-        return res.status(400).json({ error: 'Email already in use' });
-      }
-
-      if (existingUsername) {
-        console.log('Usernme already in use:' , email);
-        return res.status(400).json({ error: 'Username already in use' });
-      }
-
-      // Hash the password
-      const saltRounds = 10;
-      const hashedPassword = await bcrypt.hash(password, saltRounds);
-
-      
-      const userId = await insertUser({ username, email, password: hashedPassword });
-      req.session.userId = userId;
-
-      // Log newUser after it's created (you can remove this line)
-      console.log('User saved:', { _id: userId, username, email });
-
-      
-
-      
-
-      res.status(201).json({ message: 'User registered successfully' });
-    } catch (error) {
-      console.error('Error in user registration:', error);
-      res.status(500).json({ error: 'Internal server error' });
-    } 
-  },
-
-
-
-  login: async (req, res) => {
-    try {
-      const { username, password } = req.body;
-  
-      // Find the user by email
-      const user = await findUserByUsername(username) ;
-  
-      if (!user) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-  
-      // Compare the entered password with the hashed password
-      const isPasswordMatch = await bcrypt.compare(password, user.password);
-  
-      if (!isPasswordMatch) {
-        return res.status(401).json({ error: 'Invalid credentials' });
-      }
-  
-      
-      req.session.userId = user._id;
-  
-      
-      res.status(200).json({
-        message: 'Login successful',
-        user: {
-          _id: user._id,
-          username: user.username,
-          email: user.email,
-        },
-      });
-    } catch (error) {
-      console.error('Error in user login:', error);
-      res.status(500).json({ error: 'Internal server error' });
+    if (existingUser) {
+      return res.json({ message: "User already exists" });
     }
-  },
-  
+
+    const newUser = {
+      email,
+      password: await bcrypt.hash(password, 12),
+      username,
+    };
+
+    await insertUser(newUser);
+
+    const token = createSecretToken(newUser._id);
+    res.cookie("token", token, {
+      withCredentials: true,
+      httpOnly: false,
+    });
+
+    res.status(201).json({ message: "User signed in successfully", success: true, user: newUser });
+    next();
+  } catch (error) {
+    console.error(error);
+  }
 };
 
-module.exports = authController;
+module.exports.Signin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    const user = await findOneUserByEmail(email);
+
+    if (!user || !(await bcrypt.compare(password, user.password))) {
+      return res.status(401).json({ message: "Invalid email or password", success: false });
+    }
+
+    const token = createSecretToken(user._id);
+    res.cookie("token", token, {
+      withCredentials: true,
+      httpOnly: false,
+    });
+
+    res.status(200).json({ message: "User signed in successfully", success: true, user });
+    next();
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Internal Server Error", success: false });
+  }
+};
+

@@ -1,45 +1,54 @@
-//login.js
-import React, {  useState, } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
-import { loginSuccess } from '../redux/Authactions';
-import store from '../redux/store';
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { useCookies } from "react-cookie";
+import axios from "axios";
+import { ToastContainer, toast } from "react-toastify";
 
-
-import '../CSS/Login.css';
-// Importing Homepage for navigation purposes, not directly used in this file
-import Homepage from './Homepage';
-
-const Login = () => {
-
-  const dispatch = useDispatch();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
-
+const AuthPage = () => {
   const navigate = useNavigate();
-
+  const [cookies] = useCookies([]);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [isSignedIn, setIsSignedIn] = useState(false);
 
+  useEffect(() => {
+    const verifyCookie = async () => {
+      // Check if the user is logged in (has a token)
+      if (cookies.token) {
+        try {
+          const { data } = await axios.get(
+            "http://localhost:5000/auth/verify-user",
+            { withCredentials: true }
+          );
   
+          const { status, user } = data;
+          setUsername(user);
   
- 
+          if (status) {
+            toast(`Hello ${user}`, {
+              position: "top-right",
+            });
+          }
+        } catch (error) {
+          // Handle unauthorized or other errors
+          console.error("Error during user verification:", error.message);
+        }
+      }
+    };
 
-  const toggleForm = () => {
-    setIsSignUp(!isSignUp);
-  };
+    verifyCookie();
+  }, [cookies]); // Only run the effect when cookies change
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-  
+
     try {
       const data = { username, email, password };
-    
+
       let url;
       let action;
-  
+
       if (isSignUp) {
         url = 'http://localhost:5000/auth/register';
         action = 'Registration';
@@ -47,7 +56,7 @@ const Login = () => {
         url = 'http://localhost:5000/auth/login';
         action = 'Login';
       }
-  
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
@@ -55,75 +64,65 @@ const Login = () => {
         },
         body: JSON.stringify(data),
       });
-  
+
       console.log(`${action} Server Response:`, response);
-  
+
       if (!response.ok) {
         if ( response.status === 401) {
           throw new Error ('Incorrect Username or Password')
         }
         throw new Error(`${action} failed: ${response.statusText}`);
       }
-  
+
       const result = await response.json();
-      console.log(`${action} Server Result:`, result); // Log the server response
-  
+      console.log(`${action} Server Result:`, result);
+
       alert(`${action} successful!`);
-      
-      setIsSignedIn(true);
 
-      console.log('Login.js: Before dispatching loginSuccess:', store.getState());
-      dispatch(loginSuccess());
-      console.log('Login.js: After dispatching loginSuccess:', store.getState());
-
+      localStorage.setItem('token', result.token);
       navigate('/homepage');
 
-  
-      // Optionally, you can redirect the user or perform other actions after successful registration/login
     } catch (error) {
       console.error(`Error during ${isSignUp ? 'registration' : 'login'}:`, error.message);
       alert(`Error: ${error.message}`); 
     }
   };
 
-  
- 
-  
+  const toggleForm = () => {
+    setIsSignUp(!isSignUp);
+  };
 
   return (
     <div className={`container ${isSignUp ? 'active' : ''}`}>
-      {isAuthenticated ? (
-        <Homepage />
-      ) : (
-        <div className={`form-container ${isSignUp ? 'sign-up' : 'sign-in'}`}>
-          {isSignUp ? (
-            <form onSubmit={handleSubmit}>
-              <h1>Create Account</h1>
-              <label htmlFor="signup-username">Username</label>
-              <input type="text" id="signup-username" name="signup-username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-  
-              <label htmlFor="signup-email">Email</label>
-              <input type="email" id="signup-email" name="signup-email" value={email} onChange={(e) => setEmail(e.target.value)} required />
-  
-              <label htmlFor="signup-password">Password</label>
-              <input type="password" id="signup-password" name="signup-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-  
-              <button type="submit">Sign Up</button>
-            </form>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <h1>Sign In</h1>
-              <label htmlFor="signin-username">Username</label>
-              <input type="text" id="signin-username" name="signin-username" value={username} onChange={(e) => setUsername(e.target.value)} required />
-  
-              <label htmlFor="signin-password">Password</label>
-              <input type="password" id="signin-password" name="signin-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
-  
-              <button type="submit">Sign In</button>
-            </form>
-          )}
-        </div>
-      )}
+      <div className={`form-container ${isSignUp ? 'sign-up' : 'sign-in'}`}>
+        {isSignUp ? (
+          <form onSubmit={handleSubmit}>
+            <h1>Create Account</h1>
+            <label htmlFor="signup-username">Username</label>
+            <input type="text" id="signup-username" name="signup-username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+
+            <label htmlFor="signup-email">Email</label>
+            <input type="email" id="signup-email" name="signup-email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+
+            <label htmlFor="signup-password">Password</label>
+            <input type="password" id="signup-password" name="signup-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+
+            <button type="submit">Sign Up</button>
+          </form>
+        ) : (
+          <form onSubmit={handleSubmit}>
+            <h1>Sign In</h1>
+            <label htmlFor="signin-username">Username</label>
+            <input type="text" id="signin-username" name="signin-username" value={username} onChange={(e) => setUsername(e.target.value)} required />
+
+            <label htmlFor="signin-password">Password</label>
+            <input type="password" id="signin-password" name="signin-password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+
+            <button type="submit">Sign In</button>
+          </form>
+        )}
+      </div>
+
       <div className="toggle-container">
         <div className={`toggle ${isSignUp ? '' : 'active'}`}>
           <div className={`toggle-panel toggle-left ${isSignUp ? 'active' : ''}`}>
@@ -144,8 +143,7 @@ const Login = () => {
       </div>
     </div>
   );
-  
 };
 
-export default Login;
+export default AuthPage;
 

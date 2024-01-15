@@ -1,66 +1,85 @@
-//controllers/taskController.js
-const { MongoClient, ObjectId } = require('mongodb');
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri);
+//taskcontroller.js
+const Task = require('../models/tasks');
 
-exports.getAllTasks = async (req, res, next) => {
+exports.getAllTasks = async (req, res) => {
   try {
-    await client.connect();
-    const collection = client.db("Database").collection("Tasks");
-    const tasks = await collection.find({}).toArray();
-    res.status(200).json(tasks);
-  } catch (error) {
-    next(error);
-  } finally {
-    await client.close();
+    const { userId } = req.session;
+    if (!userId) {
+      console.log('User not logged in');
+      return res.status(401).json({ error: 'User not logged in' });
+    }
+
+    const tasks = await Task.getAllTasks(userId);
+    if (!tasks) {
+      return res.status(404).json({ msg: 'No tasks found' });
+    }
+
+    res.json(tasks);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
 };
 
 exports.createTask = async (req, res) => {
   try {
-    await client.connect();
-    const collection = client.db("Database").collection("Tasks");
-    const task = req.body;
-    const result = await collection.insertOne(task);
-    res.status(201).json(task);
-  } catch (error) {
-    console.error('Error creating task:', error);
-    res.status(500).json({ error: 'Failed to create task', details: error.message });
-  } finally {
-    await client.close();
-  }
-};
-
-exports.updateTask = async (req, res, next) => {
-  try {
-    await client.connect();
-    const collection = client.db("Database").collection("Tasks");
-    const taskId = req.params.id;
-    const updatedTaskData = req.body;
-    const result = await collection.updateOne({ _id: new ObjectId(taskId) }, { $set: updatedTaskData });
-
-    if (result.modifiedCount > 0) {
-      res.status(200).json(updatedTaskData);
-    } else {
-      res.status(404).json({ error: 'Task not found' });
+    const { userId } = req.session;
+    if (!userId) {
+      console.log('User not logged in');
+      return res.status(401).json({ error: 'User not logged in' });
     }
+
+    const task = req.body;
+    const createdTask = await Task.createTask(task, userId);
+
+    res.status(201).json({ message: 'Task created successfully', task: createdTask });
   } catch (error) {
-    next(error);
-  } finally {
-    await client.close();
+    console.error('Error in task creation:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 };
 
-exports.deleteTask = async (req, res, next) => {
+exports.updateTask = async (req, res) => {
   try {
-    await client.connect();
-    const collection = client.db("Database").collection("Tasks");
+    const { userId } = req.session;
+    if (!userId) {
+      console.log('User not logged in');
+      return res.status(401).json({ error: 'User not logged in' });
+    }
+
     const taskId = req.params.id;
-    const result = await collection.deleteOne({ _id: new ObjectId(taskId) });
-    res.status(200).json({ message: 'Task deleted successfully' });
-  } catch (error) {
-    next(error);
-  } finally {
-    await client.close();
+    const updates = req.body;
+    const isUpdated = await Task.updateTask(taskId, updates);
+
+    if (!isUpdated) {
+      return res.status(404).json({ msg: 'Task not found' });
+    }
+
+    res.json({ message: 'Task updated successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
+  }
+};
+
+exports.deleteTask = async (req, res) => {
+  try {
+    const { userId } = req.session;
+    if (!userId) {
+      console.log('User not logged in');
+      return res.status(401).json({ error: 'User not logged in' });
+    }
+
+    const taskId = req.params.id;
+    const isDeleted = await Task.deleteTask(taskId);
+
+    if (!isDeleted) {
+      return res.status(404).json({ msg: 'Task not found' });
+    }
+
+    res.json({ message: 'Task deleted successfully' });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server Error');
   }
 };

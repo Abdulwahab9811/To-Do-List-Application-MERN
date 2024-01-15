@@ -1,57 +1,60 @@
 const express = require('express');
+const bodyParser = require('body-parser');
+const morgan = require('morgan');
+const cors = require('cors');
 const { MongoClient } = require('mongodb');
-const session = require('express-session');
+const cookieParser = require("cookie-parser");
 const dotenv = require('dotenv');
 dotenv.config();
 
-const Task = require('./models/tasks');
-const { connectToDatabase } = require('./models/user');
-const authRoutes = require('./routes/auth');
-const taskRoutes = require('./routes/task'); 
-
+const uri = process.env.MONGO_URI;
+const client = new MongoClient(uri);
 
 const app = express();
 
-const { setupMiddleware } = require('./middleware/common');
-
-setupMiddleware(app);
-
-app.use(session({
- secret: process.env.SESSION_SECRET || '5301e97645b8c3e1d956a3f06e117213cc7a30a75e0b54298f830fd264e56b6a',
- resave: true,
- saveUninitialized: true,
-}));
-
-
-// Error handling middleware
-app.use((err, req, res, next) => {
- console.error(err.stack);
- res.status(500).send({ error: err.toString() });
-});
-
-app.use('/auth', authRoutes);
-app.use('/', require('./routes/task'));
-
-
-
-const port = process.env.PORT || 5000;
-const uri = process.env.MONGO_URI;
-const client = new MongoClient(uri); // Move this line after setting uri
+// Define connectToDatabase function before startServer
+const connectToDatabase = async () => {
+  try {
+    // Your database connection code here
+    console.log('Connected to the database');
+  } catch (error) {
+    console.error('Error connecting to the database:', error);
+    throw error;
+  }
+};
 
 const startServer = async () => {
   try {
     await connectToDatabase();
     await client.connect();
-    
 
-    app.listen(port, () => {
-      console.log(`Server is running on port ${port}`);
+    app.listen(process.env.PORT || 5000, () => {
+      console.log(`Server is running on port ${process.env.PORT || 5000}`);
     });
   } catch (error) {
-    console.error('Error connecting to MongoDB:', error);
+    console.error('Error starting the server:', error);
     process.exit(1);
   }
 };
 
-startServer();
+// Middleware and route setup
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(morgan('dev'));
 
+const authRoutes = require('./routes/auth');
+
+
+app.use(
+  cors({
+    origin: ["http://localhost:3000"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
+app.use(express.json());
+app.use(cookieParser());
+app.use("/", authRoutes);
+
+startServer();

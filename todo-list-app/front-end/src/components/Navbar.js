@@ -1,11 +1,20 @@
 // Navbar.js
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink } from 'react-router-dom';
 import '../CSS/Navbar.css';
-import { useSelector } from 'react-redux';
 
 const Navbar = () => {
-  const isAuthenticated = useSelector(state => state.auth.isAuthenticated);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    // Check if a valid JWT token is present in localStorage
+    const token = localStorage.getItem('token');
+    if (token) {
+      // You may want to implement proper JWT verification logic here
+      setIsAuthenticated(true);
+    }
+  }, []); // The empty dependency array ensures this effect runs once on component mount
+
   console.log('Navbar.js: isAuthenticated:', isAuthenticated);
   return (
     <nav>

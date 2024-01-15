@@ -9,72 +9,73 @@ import moment from 'moment';
 import '../CSS/Task.css';
 
 
-const Task = () => {
+const Task = ({ userId }) => {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '' });
  
- 
   const formRef = useRef();
+ 
   const handleAddTask = async (e) => {
-    e.preventDefault();
-    const newTaskObj = { ...newTask };
-
-    try {
-      await axios.post('http://localhost:5000/tasks', newTaskObj);
-      setTasks((prevTasks) => [...prevTasks, newTaskObj]);
-      setNewTask({ title: '', description: '', dueDate: '' });
-    } catch (error) {
-      console.error('Error adding task:', error);
-      // Display a user-friendly error message, if needed
-    }
+     e.preventDefault();
+     const newTaskObj = { ...newTask };
+ 
+     try {
+       await axios.post(`http://localhost:5000/tasks/${userId}`, newTaskObj);
+       setTasks((prevTasks) => [...prevTasks, newTaskObj]);
+       setNewTask({ title: '', description: '', dueDate: '' });
+     } catch (error) {
+       console.error('Error adding task:', error);
+       // Display a user-friendly error message, if needed
+     }
   };
-
+ 
   useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await axios.get('http://localhost:5000/tasks');
-        setTasks(response.data);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-        // Display a user-friendly error message, if needed
-      }
-    };
-
-    fetchTasks();
-  }, []);
-
+     const fetchTasks = async () => {
+       try {
+         const response = await axios.get(`http://localhost:5000/tasks/${userId}`)
+         setTasks(response.data);
+       } catch (error) {
+         console.error('Error fetching tasks:', error);
+         // Display a user-friendly error message, if needed
+       }
+     };
+ 
+     fetchTasks();
+  }, [userId]);
+ 
   const handleDelete = async (taskId) => {
-    try {
-      await axios.delete(`http://localhost:5000/tasks/${taskId}`);
-      setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
-    } catch (error) {
-      console.error('Error deleting task:', error);
-      // Display a user-friendly error message, if needed
-    }
+     try {
+       await axios.delete(`http://localhost:5000/tasks/${taskId}`);
+       setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
+     } catch (error) {
+       console.error('Error deleting task:', error);
+       // Display a user-friendly error message, if needed
+     }
   };
-
+ 
   const handleUpdate = async (taskId) => {
-    try {
-      await axios.put(`http://localhost:5000/tasks/${taskId}`, { completed: true });
-      setTasks((prevTasks) =>
-        prevTasks.map((task) => (task._id === taskId ? { ...task, completed: true } : task))
-      );
-    } catch (error) {
-      console.error('Error updating task:', error);
-      // Display a user-friendly error message, if needed
-    }
+     try {
+       const updatedTaskObj = { completed: true };
+       await axios.put(`http://localhost:5000/tasks/${taskId}/${userId}`, updatedTaskObj);
+       setTasks((prevTasks) =>
+         prevTasks.map((task) => (task._id === taskId ? { ...task, completed: true } : task))
+       );
+     } catch (error) {
+       console.error('Error updating task:', error);
+       // Display a user-friendly error message, if needed
+     }
   };
-  
+ 
   const handleComplete = (taskId) => {
-    // You can add any logic related to completion here
-    console.log(`Task ${taskId} completed!`);
-  
-    // For example, you can change the color dynamically
-    const updatedTasks = tasks.map((task) =>
-      task._id === taskId ? { ...task, completed: true, color: 'green' } : task
-    );
-  
-    setTasks(updatedTasks);
+     // You can add any logic related to completion here
+     console.log(`Task ${taskId} completed!`);
+ 
+     // For example, you can change the color dynamically
+     const updatedTasks = tasks.map((task) =>
+       task._id === taskId ? { ...task, completed: true, color: 'green' } : task
+     );
+ 
+     setTasks(updatedTasks);
   };
  
 
