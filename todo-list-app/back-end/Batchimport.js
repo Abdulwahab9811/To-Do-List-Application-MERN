@@ -26,8 +26,8 @@ async function importData() {
     const database = client.db('Database');
 
     // Import data into the "users" collection
-    const hashedPassword1 = await bcrypt.hash('password1', 10);
-    const hashedPassword2 = await bcrypt.hash('password2', 10);
+    const hashedPassword1 = await bcrypt.hash('password1', 12);
+    const hashedPassword2 = await bcrypt.hash('password2', 12);
 
     const users = await database.collection('Users').insertMany([
       { _id: ObjectId(), username: 'john_doe', email: 'user1@example.com', password: hashedPassword1 },

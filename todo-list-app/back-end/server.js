@@ -4,8 +4,11 @@ const morgan = require('morgan');
 const cors = require('cors');
 const { MongoClient } = require('mongodb');
 const cookieParser = require("cookie-parser");
-const dotenv = require('dotenv');
-dotenv.config();
+const authRoutes = require('./routes/auth');
+
+
+require('dotenv').config();
+
 
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
@@ -42,7 +45,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 
-const authRoutes = require('./routes/auth');
+
 
 
 app.use(

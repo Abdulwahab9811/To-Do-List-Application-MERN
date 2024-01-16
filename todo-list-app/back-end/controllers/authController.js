@@ -1,8 +1,8 @@
 // authController.js
 
-const { insertUser, connectToDatabase } = require("../models/user");
-const { createSecretToken } = require("../utils/SecretToken");
-const bcrypt = require("bcryptjs");
+const { insertUser, connectToDatabase } = require('../models/user');
+const { createSecretToken } = require('../utils/secretToken');
+const bcrypt = require('bcrypt');
 
 async function findOneUserByEmail(email) {
   const db = await connectToDatabase();
@@ -16,50 +16,60 @@ module.exports.Signup = async (req, res, next) => {
     const existingUser = await findOneUserByEmail(email);
 
     if (existingUser) {
-      return res.json({ message: "User already exists" });
+      return res.status(400).json({ message: 'User already exists', success: false });
     }
-
+     const newPassword = await bcrypt.hash(password, 12)
+     
     const newUser = {
       email,
-      password: await bcrypt.hash(password, 12),
+      password: newPassword,
       username,
     };
 
     await insertUser(newUser);
 
     const token = createSecretToken(newUser._id);
-    res.cookie("token", token, {
+    res.cookie('token', token, {
       withCredentials: true,
       httpOnly: false,
     });
 
-    res.status(201).json({ message: "User signed in successfully", success: true, user: newUser });
+    res.status(201).json({ message: 'User signed up successfully', success: true, user: newUser });
     next();
   } catch (error) {
     console.error(error);
+    res.status(500).json({ message: 'Internal Server Error', success: false });
   }
 };
 
 module.exports.Signin = async (req, res, next) => {
   try {
     const { email, password } = req.body;
-    const user = await findOneUserByEmail(email);
+    console.log(`Attempting sign-in for email: ${email}`);
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    const user = await findOneUserByEmail(email);
+    const compareResult = await bcrypt.compare(password, user.password) 
+
+    console.log('compareResult', compareResult)
+    console.log(user.password,password) 
+
+    if (!user || !compareResult) {
+      console.log(`Sign-in failed for email: ${email}`);
       return res.status(401).json({ message: "Invalid email or password", success: false });
     }
 
+    console.log(`Sign-in successful for email: ${email}`);
+
     const token = createSecretToken(user._id);
-    res.cookie("token", token, {
+    res.cookie('token', token, {
       withCredentials: true,
       httpOnly: false,
     });
 
-    res.status(200).json({ message: "User signed in successfully", success: true, user });
+    res.status(200).json({ message: 'User signed in successfully', success: true, user });
     next();
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: "Internal Server Error", success: false });
+    res.status(500).json({ message: 'Internal Server Error', success: false });
   }
 };
-

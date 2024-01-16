@@ -1,16 +1,20 @@
 // models/user.js
 
 const { MongoClient } = require('mongodb');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
+
+require('dotenv').config();
 
 const uri = process.env.MONGO_URI;
 const client = new MongoClient(uri);
+
+
 
 async function connectToDatabase() {
   try {
     await client.connect();
     console.log('Connected to the database');
-    return client.db(); // No need to specify dbName here if it's part of your connection URI
+    return client.db("Database"); 
   } catch (error) {
     console.error('Error connecting to the database', error);
     throw error;
@@ -20,7 +24,6 @@ async function connectToDatabase() {
 async function insertUser(user) {
   const db = await connectToDatabase();
   const usersCollection = db.collection('Users');
-  user.password = await bcrypt.hash(user.password, 12);
   await usersCollection.insertOne(user);
 }
 
