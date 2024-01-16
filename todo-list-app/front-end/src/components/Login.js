@@ -1,16 +1,46 @@
 import React, { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
 import '../CSS/Login.css';
 
 const Login = () => {
+  const navigate = useNavigate(); // Use useNavigate from react-router-dom
   const [isSignUp, setIsSignUp] = useState(false);
 
   const toggleForm = () => {
     setIsSignUp(!isSignUp);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Add logic for handling form submission
+
+    const endpoint = isSignUp ? 'http://localhost:5000/signup' : 'http://localhost:5000/signin';
+
+    const formData = {
+      email: event.target.email.value,
+      password: event.target.password.value,
+    };
+
+    try {
+      const response = await axios.post(endpoint, formData, { withCredentials: true });
+
+      // Handle successful response
+      console.log(response.data);
+
+      // Display a success toast notification
+      toast.success(response.data.message);
+
+      // Redirect to the home page after successful login/signup
+      navigate('/homepage');
+    } catch (error) {
+      // Handle error response
+      console.error('Error:', error.message);
+
+      // Display an error toast notification
+      toast.error('An error occurred. Please try again.');
+    }
   };
 
   return (
@@ -19,25 +49,22 @@ const Login = () => {
         {isSignUp ? (
           <form onSubmit={handleSubmit}>
             <h1>Create Account</h1>
-            <label htmlFor="signup-username">Username</label>
-            <input type="text" id="signup-username" name="signup-username" required />
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" name="email" required />
 
-            <label htmlFor="signup-email">Email</label>
-            <input type="email" id="signup-email" name="signup-email" required />
-
-            <label htmlFor="signup-password">Password</label>
-            <input type="password" id="signup-password" name="signup-password" required />
+            <label htmlFor="password">Password</label>
+            <input type="password" id="password" name="password" required />
 
             <button type="submit">Sign Up</button>
           </form>
         ) : (
           <form onSubmit={handleSubmit}>
             <h1>Sign In</h1>
-            <label htmlFor="signin-username">Username</label>
-            <input type="text" id="signin-username" name="signin-username" required />
+            <label htmlFor="email">Email</label>
+            <input type="email" id="email" name="email" required />
 
-            <label htmlFor="signin-password">Password</label>
-            <input type="password" id="signin-password" name="signin-password" required />
+            <label htmlFor="password">Password</label>
+            <input type="password" id="password" name="password" required />
 
             <button type="submit">Sign In</button>
           </form>
@@ -61,9 +88,9 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 };
 
 export default Login;
-
