@@ -1,7 +1,10 @@
 import React from 'react';
+import { useAuth } from '../context/AuthContext';
 import '../CSS/Homepage.css';
 
 const Homepage = () => {
+
+  const { user } = useAuth();
   console.log('Rendering Homepage component');
   return (
     <div className="homepage-container">
@@ -21,6 +24,7 @@ const Homepage = () => {
             <p className="quote-text">Your future self will thank you for staying organized.</p>
             <p className="quote-author">- You</p>
           </div>
+          {user && <p>Welcome, {user.username}!</p>}
         </div>
       </section>
 

@@ -2,10 +2,12 @@ import React, { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate from react-router-dom
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../context/AuthContext';  
 import '../CSS/Login.css';
 
 const Login = () => {
+  const { isAuthenticated, login } = useAuth();
   const navigate = useNavigate(); // Use useNavigate from react-router-dom
   const [isSignUp, setIsSignUp] = useState(false);
 
@@ -16,6 +18,12 @@ const Login = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
 
+    if (isAuthenticated) {
+      toast.info('You are already signed in.');
+      navigate('/homepage');
+      return;
+    }
+
     const endpoint = isSignUp ? 'http://localhost:5000/signup' : 'http://localhost:5000/signin';
 
     const formData = {
@@ -24,23 +32,34 @@ const Login = () => {
     };
 
     try {
-      const response = await axios.post(endpoint, formData, { withCredentials: true });
+      console.log('Submitting form...');
+const response = await axios.post(endpoint, formData, { withCredentials: true });
+console.log('Response:', response.data);
+
 
       // Handle successful response
       console.log(response.data);
 
-      // Display a success toast notification
-      toast.success(response.data.message);
+      // Update the AuthContext values with the user and token
+      login(response.data.user, response.data.token);
 
-      // Redirect to the home page after successful login/signup
+      // Display a success toast notification
+      toast.success(response.data.message, 'Signed in successfully ');
+
+      console.log('Redirecting to homepage...');
       navigate('/homepage');
     } catch (error) {
       // Handle error response
       console.error('Error:', error.message);
 
       // Display an error toast notification
-      toast.error('An error occurred. Please try again.');
+      if (error.response && error.response.status === 401) {
+        toast.error('Invalid email or password. Please try again.');
+      } else {
+        toast.error('An error occurred. Please try again.');
+      }
     }
+    
   };
 
   return (

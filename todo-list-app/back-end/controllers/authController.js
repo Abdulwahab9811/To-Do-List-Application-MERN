@@ -48,13 +48,16 @@ module.exports.Signin = async (req, res, next) => {
     console.log(`Attempting sign-in for email: ${email}`);
 
     const user = await findOneUserByEmail(email);
-    const compareResult = await bcrypt.compare(password, user.password) 
 
-    console.log('compareResult', compareResult)
-    console.log(user.password,password) 
+    if (!user) {
+      console.log(`User not found for email: ${email}`);
+      return res.status(401).json({ message: "Invalid email or password", success: false });
+    }
 
-    if (!user || !compareResult) {
-      console.log(`Sign-in failed for email: ${email}`);
+    const compareResult = await bcrypt.compare(password, user.password);
+
+    if (!compareResult) {
+      console.log(`Password does not match for email: ${email}`);
       return res.status(401).json({ message: "Invalid email or password", success: false });
     }
 

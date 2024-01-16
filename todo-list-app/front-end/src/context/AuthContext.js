@@ -1,31 +1,30 @@
-// AuthContext.js
-import React, { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useState } from 'react';
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null); // You can store user information here
+  const [user, setUser] = useState(null);
+  const [token, setToken] = useState(null);
 
-  const login = () => {
-    // Perform login logic and set isAuthenticated to true
-    setIsAuthenticated(true);
-    // You may also fetch and set user information here
-    // Example: setUser({ id: 1, username: 'exampleUser' });
+  const login = (userData, authToken) => {
+    setUser(userData);
+    setToken(authToken);
   };
 
   const logout = () => {
-    // Perform logout logic and set isAuthenticated to false
-    setIsAuthenticated(false);
-    // Clear user information
     setUser(null);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, user, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+export const useAuth = () => {
+  const auth = useContext(AuthContext);
+  console.log('AuthContext values:', auth);
+  return auth;
+};

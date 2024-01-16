@@ -1,18 +1,19 @@
-// index.js
 import React from 'react';
+import 'react-toastify/dist/ReactToastify.css';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom'; 
-import 'react-toastify/dist/ReactToastify.css';// Import BrowserRouter
+import { BrowserRouter } from 'react-router-dom';
 import App from '../src/App';
+import { AuthProvider } from './context/AuthContext';
 
 const root = createRoot(document.getElementById('root'));
 
-
 root.render(
   <React.StrictMode>
-    {/* Wrap your App component with BrowserRouter */}
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <AuthProvider>
+      <BrowserRouter>
+        <App />
+      </BrowserRouter>
+    </AuthProvider>
   </React.StrictMode>
 );
+

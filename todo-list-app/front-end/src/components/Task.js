@@ -1,6 +1,7 @@
 //component/task.js
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useAuth } from '../context/AuthContext';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -10,8 +11,13 @@ import '../CSS/Task.css';
 
 
 const Task = ({ userId }) => {
+   const { user } = useAuth();
+  const userIdFromProps = user ? user.id : null;
+
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '' });
+
+  // Rest 
  
   const formRef = useRef();
  
