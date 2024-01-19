@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const passport = require('./middleware/authMiddleware')
+//const authMiddleware = require('./middleware/authMiddleware');
 const authRoutes = require('./routes/auth');
 const taskRoutes = require('./routes/task');
 
@@ -45,8 +45,10 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 
+//app.use(authMiddleware); 
+
 app.use('/', authRoutes);
-app.use('/api', passport.authenticate('jwt', { session: false }), taskRoutes);
+app.use('/api', taskRoutes);
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);

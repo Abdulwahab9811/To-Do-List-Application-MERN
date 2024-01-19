@@ -1,27 +1,21 @@
-const passport = require('passport');
-const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
-const { ObjectId } = require('mongodb');
-const { getUserById } = require('../models/user');
+// authMiddleware.js
+const jwt = require('jsonwebtoken');
 
-const jwtOptions = {
-  jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: 'secretOrKey: process.env.TOKEN_KEY,', 
+module.exports = (req, res, next) => {
+  const token = req.cookies.token; // Adjust the cookie name if needed
+
+  if (!token) {
+    return res.status(401).json({ message: 'Unauthorized', success: false });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.TOKEN_KEY);
+    console.log('Decoded Token:', decoded);
+    req.user = decoded;
+    console.log('req.user:', req.user); // Log the attached user information
+    next();
+  } catch (error) {
+    console.error('Token Verification Error:', error);
+    return res.status(401).json({ message: 'Unauthorized', success: false });
+  }
 };
-
-passport.use(
-  new JwtStrategy(jwtOptions, async (payload, done) => {
-    try {
-      const user = await getUserById(payload.sub);
-      if (user) {
-        return done(null, user);
-      } else {
-        return done(null, false);
-      }
-    } catch (error) {
-      return done(error, false);
-    }
-  })
-);
-
-module.exports = passport;

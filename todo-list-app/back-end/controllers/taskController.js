@@ -5,7 +5,7 @@ const { insertTask } = require('../models/tasks');
 module.exports.createTask = async (req, res, next) => {
   try {
     const { taskName, description, dueDate } = req.body;
-    const userId = req.user._id; // Assuming you have the user object in req.user after authentication
+    const userId = req.user ? req.user.id : null; // Handle the case where req.user is undefined
 
     const newTask = {
       taskName,
@@ -22,4 +22,6 @@ module.exports.createTask = async (req, res, next) => {
     res.status(500).json({ message: 'Internal Server Error', success: false });
   }
 };
+
+
 
