@@ -1,7 +1,7 @@
 // models/user.js
 
 const { MongoClient } = require('mongodb');
-const bcrypt = require('bcrypt');
+
 
 require('dotenv').config();
 
@@ -27,7 +27,13 @@ async function insertUser(user) {
   await usersCollection.insertOne(user);
 }
 
-module.exports = { insertUser , connectToDatabase };
+async function getUser(id) {
+  const db = await connectToDatabase();
+  const usersCollection = db.collection('Users');
+  return usersCollection.findOne({ _id: new MongoClient.ObjectID(id) });
+}
+
+module.exports = { insertUser , getUser, connectToDatabase };
 
 
 

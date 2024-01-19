@@ -17,41 +17,48 @@ const Login = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-
+  
     if (isAuthenticated) {
       toast.info('You are already signed in.');
       navigate('/homepage');
       return;
     }
-
+  
     const endpoint = isSignUp ? 'http://localhost:5000/signup' : 'http://localhost:5000/signin';
-
+  
     const formData = {
       email: event.target.email.value,
       password: event.target.password.value,
     };
+  
+    if (isSignUp) {
+      const username = event.target.username.value;
+      const Fullname = event.target.fullname.value; // Include Fullname in the formData
+      formData.username = username;
+      formData.Fullname = Fullname;
+    }
 
+  
     try {
       console.log('Submitting form...');
-const response = await axios.post(endpoint, formData, { withCredentials: true });
-console.log('Response:', response.data);
-
-
+      const response = await axios.post(endpoint, formData, { withCredentials: true });
+      console.log('Response:', response.data);
+  
       // Handle successful response
       console.log(response.data);
-
+  
       // Update the AuthContext values with the user and token
       login(response.data.user, response.data.token);
-
+  
       // Display a success toast notification
       toast.success(response.data.message, 'Signed in successfully ');
-
+  
       console.log('Redirecting to homepage...');
       navigate('/homepage');
     } catch (error) {
       // Handle error response
       console.error('Error:', error.message);
-
+  
       // Display an error toast notification
       if (error.response && error.response.status === 401) {
         toast.error('Invalid email or password. Please try again.');
@@ -59,7 +66,6 @@ console.log('Response:', response.data);
         toast.error('An error occurred. Please try again.');
       }
     }
-    
   };
 
   return (
@@ -68,6 +74,15 @@ console.log('Response:', response.data);
         {isSignUp ? (
           <form onSubmit={handleSubmit}>
             <h1>Create Account</h1>
+
+            <label htmlFor="fullname">Fullname</label>
+            <input type="text" id="fullname" name="fullname" required />
+
+
+            <label htmlFor="username">Username</label>
+            <input type="text" id="username" name="username" required />
+
+
             <label htmlFor="email">Email</label>
             <input type="email" id="email" name="email" required />
 
