@@ -11,18 +11,24 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null);
   const [userId, setUserId] = useState(null); // Add a new state variable for the user ID
 
-  const login = (userData, authToken) => {
+  const login = (userData) => {
     let userID = null;
     if (userData._id) {
-      // If userData contains an _id property, use it as the user ID
       userID = userData._id;
     } else {
-      // If userData does not contain an _id property, generate a new unique ID
       userID = uuidv4();
     }
-    setUser({ ...userData, _id: userID }); // Add the user ID to the user object before setting it in state
-    setToken(authToken);
-    setUserId(userID); // Set the user ID in state
+  
+    setUser({ ...userData, _id: userID });
+    setToken(getCookie('token')); // Use a function to get the cookie
+    setUserId(userID);
+  };
+  
+  // Add a function to get a cookie by name
+  const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
   };
 
   const logout = () => {

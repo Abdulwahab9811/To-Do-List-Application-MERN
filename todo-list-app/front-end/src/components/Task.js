@@ -2,7 +2,8 @@
 
 import React, { useState, useEffect} from 'react';
 import { useAuth } from '../context/AuthContext';
-import axiosInstance from '../context/axios-config';
+import axios from 'axios';
+//import useAxiosConfig   from '../context/axios-config';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -12,46 +13,88 @@ import '../CSS/Task.css';
 
 
 const Task = () => {
-  const { userId } = useAuth();
-
+  const { token } = useAuth();
   const API_BASE_URL = 'http://localhost:5000/api/tasks';
-
   const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState({ title: '', description: '', dueDate: '' });
+  const [newTask, setNewTask] = useState({ taskName: '', description: '', dueDate: '' });
+  const [error, setError] = useState(null);
 
-  // Rest 
- 
+
+  
+  
+    useEffect(() => {
+      const fetchTasks = async () => {
+        try {
+          const response = await axios.get(API_BASE_URL, {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          console.log('Token:', token);
+  
+          setTasks(response.data);
+        } catch (error) {
+          // Set the error state to handle it in the component
+          setError(error);
+        }
+      };
+  
+      fetchTasks();
+    }, [token, API_BASE_URL]);
+  
+    // Display error information
+    if (error) {
+      if (error.response) {
+        console.log('Status:', error.response.status);
+        console.log('Data:', error.response.data);
+        console.log('Headers:', error.response.headers);
+      } else if (error.request) {
+        console.log('No response received:', error.request);
+      } else {
+        console.log('Error setting up the request:', error.message);
+      }
+    }
+
   const handleCreateTask = async (e) => {
     e.preventDefault();
-    const newTaskObj = { ...newTask };
+    console.log('Handling create task...');
+    console.log('New task:', newTask);
+    console.log('Token:', token); // Logging the token for verification
+  
+    const newTaskObj = {
+      taskName: newTask.taskName,  // Update property name to taskName
+      description: newTask.description,
+      dueDate: newTask.dueDate,
+    };
   
     try {
-      await axiosInstance.post(`${API_BASE_URL}`, newTaskObj);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+     
+
+  
+      console.log('Request Config:', config); // Logging the request config
+  
+      // Make the POST request with the token directly
+      await axios.post(`${API_BASE_URL}`, newTaskObj, config);
+  
+      // Update the local state
       setTasks((prevTasks) => [...prevTasks, newTaskObj]);
-      setNewTask({ title: '', description: '', dueDate: '' });
+      setNewTask({ taskName: '', description: '', dueDate: '' });
     } catch (error) {
       console.error('Error creating task:', error);
       // Display a user-friendly error message, if needed
     }
   };
   
-  useEffect(() => {
-    const fetchTasks = async () => {
-      try {
-        const response = await axiosInstance.get(`${API_BASE_URL}`);
-        setTasks(response.data.tasks);
-      } catch (error) {
-        console.error('Error fetching tasks:', error);
-        // Display a user-friendly error message, if needed
-      }
-    };
-  
-    fetchTasks();
-  }, [userId]);
   
   const handleDeleteTask = async (taskId) => {
     try {
-      await axiosInstance.delete(`${API_BASE_URL}/${taskId}`);
+      await axios.delete(`${API_BASE_URL}/${taskId}`);
       setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -62,7 +105,7 @@ const Task = () => {
   const handleUpdateTask = async (taskId) => {
     try {
       const updatedTaskObj = { completed: true };
-      await axiosInstance.put(`${API_BASE_URL}/${taskId}`, updatedTaskObj);
+      await axios.put(`${API_BASE_URL}/${taskId}`, updatedTaskObj);
       setTasks((prevTasks) =>
         prevTasks.map((task) => (task._id === taskId ? { ...task, completed: true , color: 'green'} : task))
       );
@@ -77,7 +120,44 @@ const Task = () => {
     <div className="task-container">
       <h1 className="text-3xl font-semibold mb-4">Add Task</h1>
       <form onSubmit={handleCreateTask} className="flex flex-col gap-4 mb-4">
-        {/* ... (unchanged) */}
+      <div className="form-group">
+          <label htmlFor="title" className="form-label">Task Name:</label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={newTask.taskName}
+            onChange={(e) => setNewTask((prevTask) => ({ ...prevTask, taskName: e.target.value }))}
+            placeholder="Enter task name"
+            className="form-input"
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="description" className="form-label">Task Description:</label>
+          <textarea
+            id="description"
+            name="description"
+            value={newTask.description}
+            onChange={(e) => setNewTask((prevTask) => ({ ...prevTask, description: e.target.value }))}
+            placeholder="Enter task description"
+            rows="3"
+            className="form-input"
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="dueDate" className="form-label">Due Date:</label>
+          <input
+            type="datetime-local"
+            id="dueDate"
+            name="dueDate"
+            value={newTask.dueDate}
+            onChange={(e) => setNewTask((prevTask) => ({ ...prevTask, dueDate: e.target.value }))}
+            className="form-input"
+            required
+          />
+        </div>
+
         <button type="submit" className="form-button">
           Add Task
         </button>
@@ -86,7 +166,7 @@ const Task = () => {
       {tasks.map((task) => (
         <div key={task._id} className="task-card">
           <div className="task-info">
-            <h4 className="task-title">{task.title}</h4>
+            <h4 className="task-title">{task.taskName}</h4>
             <p className="task-description">{task.description}</p>
             <div className='task-meta'>
               {task.dueDate && (

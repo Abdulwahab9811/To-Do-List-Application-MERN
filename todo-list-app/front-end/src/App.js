@@ -6,7 +6,7 @@ import Homepage from './components/Homepage';
 import Task from './components/Task';
 import Account from './components/Account';
 import Navbar from './components/Navbar';
-//import PrivateRoute from './PrivateRoute';
+
 
 
 const App = () => {
