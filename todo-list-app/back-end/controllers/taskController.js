@@ -28,7 +28,8 @@ module.exports.getAllTasksByUser = async (req, res, next) => {
   try {
     const userId = req.user ? req.user.id : null;
     const tasks = await getAllTasks(userId);
-
+     
+    console.log(req.headers)
     res.status(200).json({ tasks, success: true });
   } catch (error) {
     console.error(error);

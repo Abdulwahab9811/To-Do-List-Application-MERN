@@ -3,7 +3,9 @@ const jwt = require('jsonwebtoken');
 
 module.exports = (req, res, next) => {
   const token = req.cookies.token; // Adjust the cookie name if needed
+  console.log(token , 'token')
 
+  console.log(req.headers , 'headers')
   if (!token) {
     return res.status(401).json({ message: 'Unauthorized', success: false });
   }
@@ -16,6 +18,6 @@ module.exports = (req, res, next) => {
     next();
   } catch (error) {
     console.error('Token Verification Error:', error);
-    return res.status(401).json({ message: 'Unauthorized', success: false });
+    return res.status(401).json({ message: 'Unauthorized verification ', success: false });
   }
 };

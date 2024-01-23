@@ -3,7 +3,6 @@
 import React, { useState, useEffect} from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
-//import useAxiosConfig   from '../context/axios-config';
 import DeleteIcon from '@mui/icons-material/Delete';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import RestoreIcon from '@mui/icons-material/Restore';
@@ -13,11 +12,13 @@ import '../CSS/Task.css';
 
 
 const Task = () => {
-  const { token } = useAuth();
+  const { user, token, userId } = useAuth();
+  console.log('AuthContext values:', { user, token, userId });
+
   const API_BASE_URL = 'http://localhost:5000/api/tasks';
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState({ taskName: '', description: '', dueDate: '' });
-  const [error, setError] = useState(null);
+  const [ setError] = useState(null);
 
 
   
@@ -25,12 +26,13 @@ const Task = () => {
     useEffect(() => {
       const fetchTasks = async () => {
         try {
-          const response = await axios.get(API_BASE_URL, {
+          const response = await axios.get(API_BASE_URL, { withCredentials: true , 
             headers: {
-              Authorization: `Bearer ${token}`,
+              Authorization: {token,},
             },
           });
           console.log('Token:', token);
+          console.log(response.data , 'tasks')
   
           setTasks(response.data);
         } catch (error) {
@@ -42,18 +44,7 @@ const Task = () => {
       fetchTasks();
     }, [token, API_BASE_URL]);
   
-    // Display error information
-    if (error) {
-      if (error.response) {
-        console.log('Status:', error.response.status);
-        console.log('Data:', error.response.data);
-        console.log('Headers:', error.response.headers);
-      } else if (error.request) {
-        console.log('No response received:', error.request);
-      } else {
-        console.log('Error setting up the request:', error.message);
-      }
-    }
+   
 
   const handleCreateTask = async (e) => {
     e.preventDefault();
@@ -68,7 +59,8 @@ const Task = () => {
     };
   
     try {
-      const config = {
+      const config = { 
+        withCredentials: true,
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -94,7 +86,12 @@ const Task = () => {
   
   const handleDeleteTask = async (taskId) => {
     try {
-      await axios.delete(`${API_BASE_URL}/${taskId}`);
+
+      const config = {
+        withCredentials: true,
+      };
+  
+      await axios.delete(`${API_BASE_URL}/${taskId}`, config);
       setTasks((prevTasks) => prevTasks.filter((task) => task._id !== taskId));
     } catch (error) {
       console.error('Error deleting task:', error);
@@ -105,7 +102,10 @@ const Task = () => {
   const handleUpdateTask = async (taskId) => {
     try {
       const updatedTaskObj = { completed: true };
-      await axios.put(`${API_BASE_URL}/${taskId}`, updatedTaskObj);
+    const config = {
+      withCredentials: true,
+    };
+      await axios.put(`${API_BASE_URL}/${taskId}`, updatedTaskObj,config);
       setTasks((prevTasks) =>
         prevTasks.map((task) => (task._id === taskId ? { ...task, completed: true , color: 'green'} : task))
       );
@@ -162,8 +162,10 @@ const Task = () => {
           Add Task
         </button>
       </form>
+
+
   
-      {tasks.map((task) => (
+      {tasks.tasks && tasks.tasks.map((task) => (
         <div key={task._id} className="task-card">
           <div className="task-info">
             <h4 className="task-title">{task.taskName}</h4>
