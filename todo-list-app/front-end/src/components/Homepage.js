@@ -1,10 +1,27 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import '../CSS/Homepage.css';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Homepage = () => {
 
   const { user } = useAuth();
+
+  useEffect(() => {
+    if (user) {
+      toast.success(`Welcome, ${user.username}!`, {
+        position: "bottom-left",
+        autoClose: 3000, // Set the duration for how long the toast will be displayed
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+      });
+    }
+  }, [user]);
+
   console.log('Rendering Homepage component');
   return (
     <div className="homepage-container">
@@ -24,7 +41,7 @@ const Homepage = () => {
             <p className="quote-text">Your future self will thank you for staying organized.</p>
             <p className="quote-author">- You</p>
           </div>
-          {user && <p>Welcome, {user.username}!</p>}
+          
         </div>
       </section>
 
@@ -46,6 +63,7 @@ const Homepage = () => {
       style={{ width: '100%', height: 'auto' }}
       />
       </section> 
+      <ToastContainer />
     </div>
   );
 };
