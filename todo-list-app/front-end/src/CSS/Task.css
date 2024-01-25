@@ -11,14 +11,72 @@
 }
 
 body {
-  background-color: #f5f5f5;
+  background-color: #c9d6ff;
+  background: linear-gradient(to right, #e2e2e2, #c9d6ff);
   display: flex;
   justify-content: center;
   flex-direction: column;
   height: 100vh;
-  margin: 0;
-  font-family: 'Montserrat', sans-serif;
 }
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); /* Optional: Add a slight upward animation */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes scaleIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+
+.task-container {
+  display: flex;
+  justify-content:space-around;
+  animation: fade-in 1s ease-in-out;
+  
+}
+
+.task-form-container {
+  background-color: #fff;
+  border-radius: 30px;
+  padding: 20px;
+  align-items: center;
+  margin-bottom: 20px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+  max-width: 100%;
+  min-height: 480px;
+  width: 60%; /* Adjust the width as needed */
+  animation: scaleIn 0.8s ease-out; 
+}
+
+.task-list-container {
+  background-color: #fff;
+  border-radius: 30px;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+  scrollbar-width: thin;
+  scrollbar-color: #888 #ddd; /* Add a scrollbar for overflow */
+  max-width: 100%;
+  min-height: 480px;
+  width: 35%; /* Adjust the width as needed */
+  padding: 20px;
+  height: 500px; /* Set a fixed height */
+  overflow-y: auto; /* Added padding for spacing */
+  animation: scaleIn 0.8s ease-out; 
+}
+
+
 
 
 
@@ -89,15 +147,16 @@ button:hover {
 
 /* Task Styling */
 .task-card {
-    border: 1px solid #ddd;
-    padding: 20px;
-    margin-bottom: 15px;
-    border-radius: 8px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: background-color 0.3s ease;
-  }
+  border: 70px solid #716f6f;
+  border-width: 30px;
+  padding: 100px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
   
   .task-card:hover {
     background-color: #d4d4d4;
@@ -143,9 +202,7 @@ button:hover {
  /* Add these styles to your CSS */
 
 
-.view-completed-tasks-link-container {
-  display: none; /* Initially hide the link container */
-}
+
 
 .task-card:hover .view-completed-tasks-link-container {
   display: flex; /* Show the link container on hover */
@@ -189,7 +246,7 @@ button:hover {
     background-color: #512da8;
     color: #fff;
     font-size: 15px;
-    padding: 10px;
+    padding:  10px;
     border: none;
     border-radius: 6px;
     font-weight: 600;
@@ -203,15 +260,3 @@ button:hover {
   .notifications:hover {
     background-color: #392183;
   }
-
-  
-  
-  
-
-
-
-
-
-
-
-

@@ -79,7 +79,7 @@ const Notification = () => {
   return (
     <div className="notification-container">
       <h1>Notifications</h1>
-      <Link to="/tasks">Go Back to Tasks</Link>
+      <Link className='link' to="/tasks">Go Back to Tasks</Link>
       {tasks.map((task) => (
         <div key={task._id} className={`task-card ${task.completed ? 'completed' : ''}`}>
           <div className="task-info">

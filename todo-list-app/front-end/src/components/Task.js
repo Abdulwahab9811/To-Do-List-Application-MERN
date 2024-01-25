@@ -192,84 +192,89 @@ const Task = () => {
 
   return (
     <div className="task-container">
-      <h1 className="text-3xl font-semibold mb-4">Add Task</h1>
-      <form onSubmit={handleFormSubmit} className="flex flex-col gap-4 mb-4">
-        <div className="form-group">
-          <label htmlFor="title" className="form-label">
-            Task Name:
-          </label>
-          <input
-            type="text"
-            id="title"
-            name="taskName"
-            value={editingTask.taskName}
-            onChange={handleInputChange}
-            placeholder="Enter task name"
-            className="form-input"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="description" className="form-label">
-            Task Description:
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            value={editingTask.description}
-            onChange={handleInputChange}
-            placeholder="Enter task description"
-            rows="3"
-            className="form-input"
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="dueDate" className="form-label">
-            Due Date:
-          </label>
-          <input
-            type="datetime-local"
-            id="dueDate"
-            name="dueDate"
-            value={editingTask.dueDate}
-            onChange={handleInputChange}
-            className="form-input"
-            required
-          />
-        </div>
-
-        <button type="submit" className="form-button">
-          {editingTaskId ? 'Update Task' : 'Add Task'}
-        </button>
-      </form>
       
-      <Link className='notifications' to="/notifications">Notifications</Link>
-
-
-      {tasks.map((task) => (
-          <div key={task._id} className="task-card">
-          <div className="task-info">
-            <h4 className="task-title">{task.taskName}</h4>
-            <p className="task-description">{task.description}</p>
-            <div className="task-meta">
-              {task.dueDate && (
-                <p className="task-due-date">{`Due: ${moment(task.dueDate).format('MMMM D, YYYY h:mm A')}`}</p>
-              )}
+      <div className="task-form-container">
+      <h1 className="text-3xl font-semibold mb-4">Add Task</h1>
+        <form onSubmit={handleFormSubmit} className="flex flex-col gap-4 mb-4">
+          <div className="form-group">
+            <label htmlFor="title" className="form-label">
+              Task Name:
+            </label>
+            <input
+              type="text"
+              id="title"
+              name="taskName"
+              value={editingTask.taskName}
+              onChange={handleInputChange}
+              placeholder="Enter task name"
+              className="form-input"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="description" className="form-label">
+              Task Description:
+            </label>
+            <textarea
+              id="description"
+              name="description"
+              value={editingTask.description}
+              onChange={handleInputChange}
+              placeholder="Enter task description"
+              rows="3"
+              className="form-input"
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="dueDate" className="form-label">
+              Due Date:
+            </label>
+            <input
+              type="datetime-local"
+              id="dueDate"
+              name="dueDate"
+              value={editingTask.dueDate}
+              onChange={handleInputChange}
+              className="form-input"
+              required
+            />
+          </div>
+  
+          <button type="submit" className="form-button">
+            {editingTaskId ? 'Update Task' : 'Add Task'}
+          </button>
+        </form>
+      </div>
+  
+      
+  
+      <div className="task-list-container">
+        {tasks.map((task) => (
+            <div key={task._id} className="task-card">
+            <div className="task-info">
+              <h4 className="task-title">{task.taskName}</h4>
+              <p className="task-description">{task.description}</p>
+              <div className="task-meta">
+                {task.dueDate && (
+                  <p className="task-due-date">{`Due: ${moment(task.dueDate).format('MMMM D, YYYY h:mm A')}`}</p>
+                )}
+              </div>
+            </div>
+            <div className="task-actions">
+              <DeleteIcon
+                onClick={() => handleDeleteTask(task._id)}
+                className="task-action-icon delete-task-btn"
+              />
+  
+              <EditIcon
+                onClick={() => handleEditTask(task)}
+                className="task-action-icon edit-task-btn"
+              />
             </div>
           </div>
-          <div className="task-actions">
-            <DeleteIcon
-              onClick={() => handleDeleteTask(task._id)}
-              className="task-action-icon delete-task-btn"
-            />
-
-            <EditIcon
-              onClick={() => handleEditTask(task)}
-              className="task-action-icon edit-task-btn"
-            />
-          </div>
-        </div>
-      ))}
+        ))}
+        <Link className='notifications' to="/notifications">Notifications</Link>
+      </div>
     </div>
   );
 };
