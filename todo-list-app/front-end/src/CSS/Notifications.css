@@ -1,0 +1,102 @@
+/* Notification.css */
+
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.notification-container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.task-card {
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin-bottom: 15px;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background-color 0.3s ease;
+}
+
+.task-card:hover {
+  background-color: #d4d4d4;
+}
+
+.task-info {
+  flex-grow: 1;
+}
+
+.task-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.task-description {
+  font-size: 18px;
+  color: #666;
+}
+
+.task-meta {
+  font-size: 16px;
+  color: #999;
+}
+
+.task-actions {
+  display: flex;
+  gap: 15px;
+}
+
+.complete-task-btn,
+.undo-task-btn {
+  font-size: 24px;
+  cursor: pointer;
+  color: #2196f3;
+  transition: color 0.3s ease;
+}
+
+.complete-task-btn:hover,
+.undo-task-btn:hover {
+  color: #4caf50; /* Green color on hover */
+}
+
+.task-card.completed {
+  background-color: #b388ff; /* Purple color for completed tasks */
+}
+
+.view-completed-tasks-link-container {
+  display: none; /* Initially hide the link container */
+}
+
+.task-card:hover .view-completed-tasks-link-container {
+  display: flex; /* Show the link container on hover */
+  gap: 15px; /* Adjust the gap to your preference */
+  align-items: center; /* Center the link vertically with the icons */
+}
+
+.view-completed-tasks-link {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: #512da8;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.view-completed-tasks-link:hover {
+  background-color: #392183;
+}

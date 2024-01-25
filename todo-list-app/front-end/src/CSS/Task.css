@@ -185,6 +185,25 @@ button:hover {
     transition: background-color 0.3s ease;
   }
 
+  .notifications {
+    background-color: #512da8;
+    color: #fff;
+    font-size: 15px;
+    padding: 10px;
+    border: none;
+    border-radius: 6px;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-left: 12px;
+    
+  }
+
+  .notifications:hover {
+    background-color: #392183;
+  }
+
   
   
   

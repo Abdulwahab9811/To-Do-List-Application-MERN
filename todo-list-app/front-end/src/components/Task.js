@@ -1,6 +1,7 @@
 //component/task.js
 
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -17,7 +18,7 @@ const Task = () => {
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editingTask, setEditingTask] = useState({ taskName: '', description: '', dueDate: '' });
 
-  const [ setError] = useState(null);
+  const [ setError] = useState(null); 
 
   const fetchTasks = async () => {
     try {
@@ -241,6 +242,8 @@ const Task = () => {
           {editingTaskId ? 'Update Task' : 'Add Task'}
         </button>
       </form>
+      
+      <Link className='notifications' to="/notifications">Notifications</Link>
 
 
       {tasks.map((task) => (

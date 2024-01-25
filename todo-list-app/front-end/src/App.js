@@ -6,6 +6,7 @@ import Homepage from './components/Homepage';
 import Task from './components/Task';
 import Account from './components/Account';
 import Navbar from './components/Navbar';
+import Notification from './components/Notification';
 
 
 
@@ -19,6 +20,7 @@ const App = () => {
           <Route path="/tasks" element={<Task />} />
           <Route path="/homepage" element={<Homepage />} />
           <Route path="/account" element={<Account />} />
+          <Route path="/notifications" element={<Notification />} />
           <Route path="/" element={<Login />} />
         </Routes>
       </div>
