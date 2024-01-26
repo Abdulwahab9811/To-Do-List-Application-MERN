@@ -7,150 +7,69 @@
   padding: 0;
   box-sizing: border-box;
   font-family: 'Montserrat', sans-serif;
-}
-body {
-  background-color: #c9d6ff;
-  background: linear-gradient(to right, #e2e2e2, #c9d6ff);
-  display: flex;
-  justify-content: center;
-  
-  height: 100vh;
+
 }
 
 
+body{
+    background-color: #c9d6ff;
+    background: linear-gradient(to right, #e2e2e2, #c9d6ff);
+    display: flex;
+    
+    height: 100vh;
+}
 .notification-container {
-  padding: 20px;
-  background-color: #f5f5f5;
-  border-radius: 8px;
-  
-  flex-direction: column;
-  align-items: center;
-  font-family: 'Montserrat', sans-serif;
-  transform: translate(-50%, -50%);
-  height: 500px; /* Set a fixed height */
-  overflow-y: auto;
-  background-color: #fff;
-  border-radius: 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
-  scrollbar-width: thin;
-  scrollbar-color: #888 #ddd; /* Add a scrollbar for overflow */
- 
-  
-  
-   /* Set a fixed height */
-  
+background-color: #fff;
+border-radius: 30px;
+box-shadow: 0 5px 15px rgba(160, 155, 155, 0.35);
+scrollbar-width: thin;
+scrollbar-color: #888 #ddd; /* Add a scrollbar for overflow */
+max-width: 100%;
+justify-content: center;
+min-height: 480px;
+width: 50%; /* Adjust the width as needed */
+padding: 20px;
+height: 500px; /* Set a fixed height */
+overflow-y: auto; /* Added padding for spacing */
+animation: scaleIn 0.8s ease-out; 
+position: absolute;
+top: 50%;
+left: 50%;
+transform: translate(-50%, -50%);
 }
+
 
 .task-card {
-  border: 1px solid #ddd;
-  padding: 20px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  transition: background-color 0.3s ease;
-  position: relative;
-}
+    border: 2px solid #392183; /* Changed to a solid border with a color */
+    padding: 20px; /* Adjusted padding */
+    margin-bottom: 20px;
+    border-radius: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Added background-color and adjusted transitions */
+    background-color: #fff; /* Added a background color */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 2px rgba(0, 0, 0, 0.1); /* Added a subtle box shadow */
+  }
 
-.task-card:before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 8px;
-  background: linear-gradient(45deg, #512da8, #2196f3);
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  z-index: -1;
-}
-
-.task-card:hover:before {
-  opacity: 1;
-}
-
-.task-card:hover {
-  background-color: #d4d4d4;
-}
-
-.task-info {
-  flex-grow: 1;
-}
-
-.task-title {
-  font-size: 24px;
-  font-weight: bold;
-  margin-bottom: 8px;
-  color: #333;
-}
-
-.task-description {
-  font-size: 18px;
-  color: #666;
-}
-
-.task-meta {
-  font-size: 16px;
-  color: #999;
-}
-
-.task-actions {
-  display: flex;
-  gap: 15px;
-}
-
-.complete-task-btn,
-.undo-task-btn {
-  font-size: 24px;
-  cursor: pointer;
-  color: #2196f3;
-  transition: color 0.3s ease;
-}
-
-.complete-task-btn:hover,
-.undo-task-btn:hover {
-  color: #4caf50; /* Green color on hover */
-}
-
-.task-card.completed {
-  background-color: #b388ff; /* Purple color for completed tasks */
-}
-
-.view-completed-tasks-link-container {
-  display: none; /* Initially hide the link container */
-}
-
-.task-card:hover .view-completed-tasks-link-container {
-  display: flex; /* Show the link container on hover */
-  gap: 15px; /* Adjust the gap to your preference */
-  align-items: center; /* Center the link vertically with the icons */
-}
-
-
-
-.view-completed-tasks-link:hover {
-  background-color: #392183;
-}
-
-.link {
-  background-color: #512da8;
+  .link {
+    background-color: #512da8;
   color: #fff;
-  font-size: 15px;
-  padding: 10px;
+  font-size: 16px;
+  padding: 12px;
   border: none;
-  border-radius: 6px;
+  border-radius: 8px;
   font-weight: 600;
   letter-spacing: 0.5px;
   cursor: pointer;
   transition: background-color 0.3s ease;
-  margin-left: 12px;
-  margin-bottom: 10px;
-}
+  position: absolute;
+  top: 20%;
+  left: 10%;
+  transform: translate(-50%, -50%);
+  }
 
-.link:hover {
-  background-color: #392183;
-}
-
-/* Add your keyframes and other styling as needed */
+  .link:hover {
+    background-color: #392183;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }

@@ -64,7 +64,7 @@ body {
 .task-list-container {
   background-color: #fff;
   border-radius: 30px;
-  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 5px 15px rgba(160, 155, 155, 0.35);
   scrollbar-width: thin;
   scrollbar-color: #888 #ddd; /* Add a scrollbar for overflow */
   max-width: 100%;
@@ -74,6 +74,7 @@ body {
   height: 500px; /* Set a fixed height */
   overflow-y: auto; /* Added padding for spacing */
   animation: scaleIn 0.8s ease-out; 
+  
 }
 
 
@@ -147,20 +148,23 @@ button:hover {
 
 /* Task Styling */
 .task-card {
-  border: 70px solid #716f6f;
-  border-width: 30px;
-  padding: 100px;
+  border: 2px solid #392183; /* Changed to a solid border with a color */
+  padding: 20px; /* Adjusted padding */
   margin-bottom: 20px;
   border-radius: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease; /* Added background-color and adjusted transitions */
+  background-color: #fff; /* Added a background color */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1), 0 0 2px rgba(0, 0, 0, 0.1); /* Added a subtle box shadow */
 }
-  
-  .task-card:hover {
-    background-color: #d4d4d4;
-  }
+
+.task-card:hover {
+  background-color: #f9f9f9; /* Background color change on hover */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1), 0 0 4px rgba(0, 0, 0, 0.1);
+}
   
   .task-info {
     flex-grow: 1;
@@ -191,7 +195,7 @@ button:hover {
   .task-action-icon {
     font-size: 24px;
     cursor: pointer;
-    color: #555;
+    color: rgba(20, 19, 19, 0.934);
     transition: color 0.3s ease;
   }
   
@@ -218,16 +222,17 @@ button:hover {
   color: #fff;
   text-decoration: none;
   font-weight: 600;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .view-completed-tasks-link:hover {
   background-color: #392183;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 
 
-/* Modern Flex Col Styling */
+
 .flex-col {
     display: flex;
     flex-direction: column;
@@ -246,17 +251,18 @@ button:hover {
     background-color: #512da8;
     color: #fff;
     font-size: 15px;
-    padding:  10px;
+    padding: 10px;
     border: none;
     border-radius: 6px;
     font-weight: 600;
     letter-spacing: 0.5px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease; 
     margin-left: 12px;
-    
   }
-
+  
   .notifications:hover {
     background-color: #392183;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added box shadow on hover */
   }
+  
