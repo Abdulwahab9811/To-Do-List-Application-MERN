@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useAuth } from '../context/AuthContext';
 import { toast, ToastContainer } from 'react-toastify';
-import { FaTrash, FaEdit } from 'react-icons/fa';
+import { FaTrash } from 'react-icons/fa';
 import 'react-toastify/dist/ReactToastify.css';
 import { Link } from 'react-router-dom'; 
 import '../CSS/Notifications.css'
@@ -12,7 +12,11 @@ const Notification = () => {
   const { token } = useAuth();
   const API_BASE_URL = 'http://localhost:5000/api/tasks';
   const [tasks, setTasks] = useState([]);
-  const [completedTasks, setCompletedTasks] = useState([]);
+
+  // Fetch tasks on mount or when the token changes
+  useEffect(() => {
+    fetchTasks();
+  }, [token, API_BASE_URL]);
 
   const fetchTasks = async () => {
     try {
@@ -28,13 +32,8 @@ const Notification = () => {
     }
   };
 
-  useEffect(() => {
-    fetchTasks();
-  }, [token, API_BASE_URL]);
-
   const handleCompleteTask = async (taskId) => {
     try {
-      // Update task as completed
       const config = {
         withCredentials: true,
         headers: {
@@ -44,22 +43,22 @@ const Notification = () => {
       await axios.put(`${API_BASE_URL}/${taskId}`, { completed: true }, config);
 
       // Show success toast
-      toast.success('Task completed successfully', { position: 'top-right' });
+      toast.success('Task completed successfully', { position: 'bottom-right' });
 
-      setCompletedTasks((prevCompletedTasks) => [...prevCompletedTasks, taskId]);
-
-      // Refetch tasks to update the UI
-      fetchTasks();
+      // Update the task in the local state
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task._id === taskId ? { ...task, completed: true } : task
+        )
+      );
     } catch (error) {
       console.error('Error completing task:', error);
-      // Display an error toast if needed
-      toast.error('Error completing task', { position: 'bottom-right' });
+      toast.error('Error completing task', { position: 'bottom-left' });
     }
   };
 
   const handleUndoCompleteTask = async (taskId) => {
     try {
-      // Update task as not completed
       const config = {
         withCredentials: true,
         headers: {
@@ -69,17 +68,17 @@ const Notification = () => {
       await axios.put(`${API_BASE_URL}/${taskId}`, { completed: false }, config);
 
       // Show undo success toast
-      toast.info('Task completion undone', { position: 'top-right' });
+      toast.info('Task completion undone', { position: 'bottom-right' });
 
-      setCompletedTasks((prevCompletedTasks) => prevCompletedTasks.filter((id) => id !== taskId));
-
-
-      // Refetch tasks to update the UI
-      fetchTasks();
+      // Update the task in the local state
+      setTasks((prevTasks) =>
+        prevTasks.map((task) =>
+          task._id === taskId ? { ...task, completed: false } : task
+        )
+      );
     } catch (error) {
       console.error('Error undoing task completion:', error);
-      // Display an error toast if needed
-      toast.error('Error undoing task completion', { position: 'bottom-right' });
+      toast.error('Error undoing task completion', { position: 'bottom-left' });
     }
   };
   
@@ -107,7 +106,7 @@ const Notification = () => {
         </>,
         {
           autoClose: false,
-          position: 'top-center',
+          position: 'bottom-left',
         }
       );
     } catch (error) {
@@ -131,11 +130,11 @@ const Notification = () => {
       fetchTasks();
   
       // Show a success message using react-toastify
-      toast.success('Task deleted successfully', { position: 'top-center' });
+      toast.success('Task deleted successfully', { position: 'bottom-right' });
     } catch (error) {
       console.error('Error deleting task:', error);
       // Display a user-friendly error message, if needed
-      toast.error('Error deleting task', { position: 'top-center' });
+      toast.error('Error deleting task', { position: 'bottom-left' });
     }
   };
   
@@ -157,9 +156,8 @@ const Notification = () => {
               <p>{task.description}</p>
               <p>Due Date: {task.dueDate}</p>
               {task.completed ? (
-                <p>Task Completed</p>
-              ) : (
-                <div className="task-actions">
+                <>
+                <p className='completedTask'>Task Completed</p>
                   <FaTrash
                     onClick={() => handleDeleteTask(task._id)}
                     className="task-action-icon delete-task-btn"
@@ -167,10 +165,18 @@ const Notification = () => {
                   <button onClick={() => handleUndoCompleteTask(task._id)} className="undo-btn">
                     Undo
                   </button>
-                  <FaEdit
-                    onClick={() => handleCompleteTask(task)}
-                    className="task-action-icon edit-task-btn"
+                </>
+              ) : (
+                <div className="task-actions">
+                  <FaTrash
+                    onClick={() => handleDeleteTask(task._id)}
+                    className="task-action-icon delete-task-btn"
                   />
+                  <button onClick={() => handleCompleteTask(task._id)} className="complete-btn">
+                    Complete
+                  </button>
+
+                 
                 </div>
               )}
             </div>
