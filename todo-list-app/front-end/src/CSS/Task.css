@@ -265,4 +265,49 @@ button:hover {
     background-color: #392183;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Added box shadow on hover */
   }
+
+  .high-priority {
+    background-color: #e46363; /* Light red for high priority */
+  }
   
+  .moderate-priority {
+    background-color: #f1f15f;
+  }
+
+  .form-priority {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .form-priority label {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+  }
+  
+  .form-priority input {
+    margin-right: 8px;
+  }
+  
+  /* Styling for the checkbox itself */
+  .form-priority input[type="checkbox"] {
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #6b7280; /* Border color */
+    border-radius: 4px;
+    outline: none;
+    cursor: pointer;
+  }
+  
+  /* Styling for the checkbox when checked */
+  .form-priority input[type="checkbox"]:checked {
+    background-color: #512da8; /* Background color when checked */
+    border-color: #6b7280; /* Border color when checked */
+  }
+  
+  /* Hide the default checkbox */
+  .form-priority input[type="checkbox"]::before {
+    display: none;
+  }

@@ -17,6 +17,8 @@ const Task = () => {
   const [tasks, setTasks] = useState([]);
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editingTask, setEditingTask] = useState({ taskName: '', description: '', dueDate: '' });
+ const [priority, setPriority] = useState('normal');
+
   const [error, setError] = useState(null);
 
   const fetchTasks = async () => {
@@ -238,6 +240,43 @@ const Task = () => {
               required
             />
           </div>
+
+          <div className="form-group">
+            <label className="form-label">Priority:</label>
+             <div className="form-priority">
+             <label>
+            <input
+             type="checkbox"
+             name="priority"
+            value="high"
+            checked={priority === 'high'}
+            onChange={() => setPriority((prev) => ({ ...prev, [editingTaskId]: 'high' }))}
+
+          />
+          High
+          </label>
+        <label>
+          <input
+           type="checkbox"
+           name="priority"
+           value="moderate"
+           checked={priority === 'moderate'}
+           onChange={() => setPriority((prev) => ({ ...prev, [editingTaskId]: 'moderate' }))}
+          />
+           Normal
+          </label>
+          <label>
+           <input
+           type="checkbox"
+           name="priority"
+           value="low"
+           checked={priority === 'low'}
+           onChange={() => setPriority((prev) => ({ ...prev, [editingTaskId]: 'low' }))}
+           />
+           Low
+         </label>
+        </div>
+       </div>
   
           <button type="submit" className="form-button">
             {editingTaskId ? 'Update Task' : 'Add Task'}
@@ -249,7 +288,8 @@ const Task = () => {
   
       <div className="task-list-container">
         {tasks.map((task) => (
-            <div key={task._id} className="task-card">
+            <div key={task._id} className={`task-card ${priority === 'high' ? 'high-priority' : (priority === 'low' ? 'low-priority' : '')}`}
+            >
             <div className="task-info">
               <h4 className="task-title">{task.taskName}</h4>
               <p className="task-description">{task.description}</p>
