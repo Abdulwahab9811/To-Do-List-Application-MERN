@@ -17,8 +17,7 @@ const Task = () => {
   const [tasks, setTasks] = useState([]);
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editingTask, setEditingTask] = useState({ taskName: '', description: '', dueDate: '' });
-
-  const [ setError] = useState(null); 
+  const [error, setError] = useState(null);
 
   const fetchTasks = async () => {
     try {

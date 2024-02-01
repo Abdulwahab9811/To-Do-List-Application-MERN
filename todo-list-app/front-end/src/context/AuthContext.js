@@ -1,15 +1,16 @@
-
-//authcontext.js
-
+// authcontext.js
 import { createContext, useContext, useState } from 'react';
-import { v4 as uuidv4 } from 'uuid'; // Import the uuid library to generate a unique ID if userData does not contain one
+import { v4 as uuidv4 } from 'uuid';
+
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [token, setToken] = useState(null);
-  const [userId, setUserId] = useState(null); // Add a new state variable for the user ID
+  const [userId, setUserId] = useState(null);
+
+  
 
   const login = (userData) => {
     let userID = null;
@@ -20,11 +21,10 @@ export const AuthProvider = ({ children }) => {
     }
   
     setUser({ ...userData, _id: userID });
-    setToken(getCookie('token')); // Use a function to get the cookie
+    setToken(getCookie('token'));
     setUserId(userID);
   };
-  
-  // Add a function to get a cookie by name
+
   const getCookie = (name) => {
     const value = `; ${document.cookie}`;
     const parts = value.split(`; ${name}=`);
@@ -32,14 +32,18 @@ export const AuthProvider = ({ children }) => {
   };
 
   const logout = () => {
+    document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    
     setUser(null);
     setToken(null);
-    setUserId(null); // Clear the user ID when logging out
+    setUserId(null); 
+    
+    
   };
 
   return (
     <AuthContext.Provider value={{ user, token, userId, login, logout }}>
-      {children}
+      {children} {/* Pass navigate as a prop to children */}
     </AuthContext.Provider>
   );
 };

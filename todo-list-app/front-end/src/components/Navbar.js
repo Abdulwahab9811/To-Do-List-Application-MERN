@@ -2,22 +2,25 @@
 import React from 'react';
 import { useEffect } from 'react';
 
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext'; 
 import '../CSS/Navbar.css';
 
 const Navbar = () => {
   const { user, logout } = useAuth();
   const isAuthenticated = !!user; // Check if user is truthy, indicating authentication
-  console.log('User and isAuthenticated:', user, isAuthenticated);
+  const navigate = useNavigate(); // Get the navigate function from react-router-dom
 
   useEffect(() => {
     // This will re-render the component when `user` changes
   }, [user]);
+
   const handleLogout = () => {
     logout();
     // You may want to redirect the user to the login page after logout
+    navigate('/login');
   };
+
   return (
     <nav>
       {isAuthenticated && (
@@ -38,9 +41,9 @@ const Navbar = () => {
             </NavLink>
           </li>
           <li className="nav-item">
-            <button className="nav-link" onClick={handleLogout}>
+            <span className="nav-link" onClick={handleLogout}>
               Logout
-            </button>
+            </span>
           </li>
         </ul>
       )}
@@ -56,4 +59,5 @@ const Navbar = () => {
     </nav>
   );
 };
+
 export default Navbar;
