@@ -187,8 +187,12 @@ const Task = () => {
   };
 
   const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setEditingTask((prevTask) => ({ ...prevTask, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    if (type === 'checkbox') {
+      setPriority(value); // Update priority directly for checkboxes
+    } else {
+      setEditingTask((prevTask) => ({ ...prevTask, [name]: value }));
+    }
   };
 
   return (
@@ -250,7 +254,7 @@ const Task = () => {
              name="priority"
             value="high"
             checked={priority === 'high'}
-            onChange={() => setPriority((prev) => ({ ...prev, [editingTaskId]: 'high' }))}
+            onChange={handleInputChange}
 
           />
           High
@@ -261,7 +265,7 @@ const Task = () => {
            name="priority"
            value="moderate"
            checked={priority === 'moderate'}
-           onChange={() => setPriority((prev) => ({ ...prev, [editingTaskId]: 'moderate' }))}
+           onChange={handleInputChange}
           />
            Normal
           </label>
@@ -271,7 +275,7 @@ const Task = () => {
            name="priority"
            value="low"
            checked={priority === 'low'}
-           onChange={() => setPriority((prev) => ({ ...prev, [editingTaskId]: 'low' }))}
+           onChange={handleInputChange}
            />
            Low
          </label>
