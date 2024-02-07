@@ -1,5 +1,7 @@
 //component/task.js
 
+//component/task.js
+
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
@@ -188,12 +190,18 @@ const Task = () => {
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
-    if (type === 'checkbox') {
-      setPriority(value); // Update priority directly for checkboxes
-    } else {
-      setEditingTask((prevTask) => ({ ...prevTask, [name]: value }));
-    }
-  };
+     if (type === 'checkbox') {
+       // Update the priority state based on the clicked checkbox name
+       if (checked) {
+         setPriority(name);
+       } else {
+         // If the checkbox is unchecked, reset the priority state
+         setPriority(null);
+       }
+     } else {
+       setEditingTask((prevTask) => ({ ...prevTask, [name]: value }));
+     }
+   };
 
   return (
     <div className="task-container">
@@ -254,7 +262,7 @@ const Task = () => {
              name="priority"
             value="high"
             checked={priority === 'high'}
-            onChange={handleInputChange}
+            onChange={(e) => handleInputChange (e)}
 
           />
           High
@@ -265,7 +273,7 @@ const Task = () => {
            name="priority"
            value="moderate"
            checked={priority === 'moderate'}
-           onChange={handleInputChange}
+           onChange={(e) => handleInputChange (e)}
           />
            Normal
           </label>
@@ -275,7 +283,7 @@ const Task = () => {
            name="priority"
            value="low"
            checked={priority === 'low'}
-           onChange={handleInputChange}
+           onChange={(e) => handleInputChange (e)}
            />
            Low
          </label>
@@ -292,7 +300,8 @@ const Task = () => {
   
       <div className="task-list-container">
         {tasks.map((task) => (
-            <div key={task._id} className={`task-card ${priority === 'high' ? 'high-priority' : (priority === 'low' ? 'low-priority' : '')}`}
+            <div key={task._id} className={`task-card ${task.priority === 'high' ? 'high-priority' : ''}`}
+
             >
             <div className="task-info">
               <h4 className="task-title">{task.taskName}</h4>
