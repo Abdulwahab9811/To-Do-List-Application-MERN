@@ -19,7 +19,7 @@ const Task = () => {
   const [tasks, setTasks] = useState([]);
   const [editingTaskId, setEditingTaskId] = useState(null);
   const [editingTask, setEditingTask] = useState({ taskName: '', description: '', dueDate: '' });
- const [priority, setPriority] = useState('normal');
+  const [priority, setPriority] = useState('normal');
 
   const [error, setError] = useState(null);
 
@@ -56,6 +56,7 @@ const Task = () => {
       taskName: editingTask.taskName,
       description: editingTask.description,
       dueDate: editingTask.dueDate,
+      priority: priority === 'high' ? 'high' : 'normal',// Add priority property to the new task object
     };
 
     try {
@@ -188,20 +189,21 @@ const Task = () => {
     }
   };
 
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-     if (type === 'checkbox') {
-       // Update the priority state based on the clicked checkbox name
-       if (checked) {
-         setPriority(name);
-       } else {
-         // If the checkbox is unchecked, reset the priority state
-         setPriority(null);
-       }
-     } else {
-       setEditingTask((prevTask) => ({ ...prevTask, [name]: value }));
-     }
-   };
+ const handleInputChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  if (type === 'checkbox') {
+    // Update the priority state based on the clicked checkbox value
+    if (checked) {
+      setPriority(value);
+    } else {
+      // If the checkbox is unchecked, reset the priority state
+      setPriority(null);
+    }
+  } else {
+    setEditingTask((prevTask) => ({ ...prevTask, [name]: value }));
+  }
+};
+
 
   return (
     <div className="task-container">
@@ -299,13 +301,14 @@ const Task = () => {
       
   
       <div className="task-list-container">
-        {tasks.map((task) => (
-            <div key={task._id} className={`task-card ${task.priority === 'high' ? 'high-priority' : ''}`}
+      {tasks.map((task) => (
+          <div key={task._id} className={`task-card ${task.priority === 'high' ? 'high-priority' : ''}`}>
 
-            >
             <div className="task-info">
               <h4 className="task-title">{task.taskName}</h4>
               <p className="task-description">{task.description}</p>
+              <p className="task-priority">{task.priority === 'high' && 'High Priority'}</p> {/* Display 'High Priority' if task is high priority */}
+
               <div className="task-meta">
                 {task.dueDate && (
                   <p className="task-due-date">{`Due: ${moment(task.dueDate).format('MMMM D, YYYY h:mm A')}`}</p>
