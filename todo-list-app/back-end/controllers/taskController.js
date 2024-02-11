@@ -5,7 +5,7 @@ const { insertTask, getAllTasks , deleteTask , getTaskById, updateTask} = requir
 module.exports.createTask = async (req, res, next) => {
   try {
     const { taskName, description, dueDate } = req.body;
-    const userId = req.user ? req.user.id : null; // Handle the case where req.user is undefined
+    const userId = req.user ? req.user.id : null; 
 
     const newTask = {
       taskName,
